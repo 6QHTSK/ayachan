@@ -12,6 +12,6 @@ func StandardDifficultyGetter(Map mapFormat.Chart, diff chartFormat.DiffType) (S
 }
 
 // ExtendDifficultyGetter 获得标准 谱面难度 信息,除了Irregular项
-func ExtendDifficultyGetter(Map mapFormat.ParsedChart, diff chartFormat.DiffType) (ExtendDifficulty Models.MapDifficultyExtend) {
+/*func ExtendDifficultyGetter(Map mapFormat.ParsedChart, diff chartFormat.DiffType) (ExtendDifficulty Models.MapDifficultyExtend) {
 	return ExtendDifficulty
-}
+}*/

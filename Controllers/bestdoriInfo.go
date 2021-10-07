@@ -1,15 +1,21 @@
 package Controllers
 
 import (
+	"ayachanV2/Config"
 	"ayachanV2/Databases"
+	"ayachanV2/Models/chartFormat"
+	"ayachanV2/Services"
 	"ayachanV2/utils"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
+	"strconv"
+	"time"
 )
 
 type InfoOutput struct {
 	Result bool        `json:"result"`
-	List   interface{} `json:"list"`
+	List   interface{} `json:"list,omitempty"`
 }
 
 // CharterPostRank 获取谱师发表谱面的排行
@@ -304,4 +310,37 @@ func CharterSelfNPSRank(c *gin.Context) {
 		Result: true,
 		List:   list,
 	})
+}
+
+func SyncRand(c *gin.Context) {
+	if time.Since(Config.LastUpdate) < time.Hour {
+		c.JSON(http.StatusForbidden, InfoOutput{Result: false})
+		return
+	}
+	go func() {
+		errCode, err := Services.BestdoriSyncRand()
+		if err != nil {
+			log.Printf("SyncRand %d,%s\n", errCode, err.Error())
+		}
+	}()
+	c.JSON(http.StatusAccepted, InfoOutput{Result: true})
+}
+
+func SyncChartID(c *gin.Context) {
+	chartID, suc := utils.ConvertParamInt(c, "chartID")
+	if !suc {
+		return
+	}
+	diff, suc := utils.ConvertQueryInt(c, "diff", strconv.Itoa(int(chartFormat.Diff_Expert)))
+	if !suc {
+		return
+	}
+	go func() {
+		errCode, err := Services.BestdoriSyncID(chartID, diff)
+		if err != nil {
+			log.Printf("SyncRand %d,%s\n", errCode, err.Error())
+			return
+		}
+	}()
+	c.JSON(http.StatusAccepted, InfoOutput{Result: true})
 }

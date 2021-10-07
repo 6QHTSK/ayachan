@@ -2,6 +2,7 @@ package chartFormat
 
 import (
 	"ayachanV2/Models"
+	"ayachanV2/Models/mapFormat"
 )
 
 type DiffType int
@@ -15,24 +16,28 @@ const (
 )
 
 type Author struct {
-	Username string // 谱面作者用户名
-	NickName string // 谱面作者昵称
+	Username string `json:"username"` // 谱面作者用户名
+	Nickname string `json:"nickname"` // 谱面作者昵称
 }
 
 type BestdoriChartItem struct {
-	chartID int    // Bestdori的谱面ID
-	Title   string // 谱面的标题
-	Artists string // 谱面的艺术家
-	Author  Author
-	Diff    DiffType
-	Level   int
+	// id = ChartID * 10 + Official ? 9 : Diff json不
+	ChartID int      `json:"id"`      // Bestdori的谱面ID
+	Title   string   `json:"title"`   // 谱面的标题
+	Artists string   `json:"artists"` // 谱面的艺术家
+	Author  Author   `json:"author"`
+	Diff    DiffType `json:"diff"`
+	Level   int      `json:"level"`
 	SongUrl struct {
-		Cover string
-		Audio string
-	} // 谱面资源
-	Likes               int    // 喜爱数
-	time                uint32 // 时间戳
-	Models.MapInfoBasic        // 一些易得的谱面数据 用于某些项
+		Cover string `json:"cover"`
+		Audio string `json:"audio"`
+	} `json:"song_url"` // 谱面资源
+	Official            bool                      `json:"official"`        //是否为官谱
+	Likes               int                       `json:"likes,omitempty"` // 喜爱数
+	PostTime            uint64                    `json:"time,omitempty"`  // 时间戳
+	LastUpdateTime      uint64                    `json:"last_update"`
+	Chart               mapFormat.BestdoriV2Chart `json:"chart,omitempty"` // 谱面
+	Models.MapInfoBasic                           // 一些易得的谱面数据 用于某些项
 }
 
 type CharterRankItem struct {
@@ -42,8 +47,14 @@ type CharterRankItem struct {
 }
 
 type SongRankItem struct {
-	Rank int // 排名
-	BestdoriChartItem
+	Rank    int      // 排名
+	ChartID int      `json:"id"`      // Bestdori的谱面ID
+	Title   string   `json:"title"`   // 谱面的标题
+	Artists string   `json:"artists"` // 谱面的艺术家
+	Author  Author   `json:"author"`
+	Diff    DiffType `json:"diff"`
+	Level   int      `json:"level"`
+	Likes   int      `json:"likes,omitempty"` // 喜爱数
 }
 
 type CharterSelfInfoBasic struct {

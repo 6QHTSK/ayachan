@@ -22,7 +22,7 @@ type Chart struct {
 		AuthorID   AuthorID // 谱面作者用户名
 		AuthorName string   // Author_Other 其他作者时使用的名义
 	}
-	Diffs struct {
+	Diffs []struct {
 		BestdoriChartID     int // Bestdori的谱面ID 0 就是未发表
 		Diff                DiffType
 		Level               int

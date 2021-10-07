@@ -37,8 +37,9 @@ func MapInfoFromBestdori(c *gin.Context) {
 	if !suc {
 		return
 	}
-	BestdoriV2Map, err := Services.GetMapData(chartID, diff)
-	if utils.ErrorHandle(c, http.StatusNotFound, err) {
+	BestdoriV2Map, errCode, err := Services.GetMapData(chartID, diff)
+	if err != nil {
+		utils.ErrorHandle(c, errCode, err)
 		return
 	}
 

@@ -29,12 +29,12 @@ type IrregularInfo struct {
 }
 
 type NoteCount struct {
-	SPRhythm    bool
 	Single      int
 	Flick       int
 	SlideStart  int
 	SlideTick   int
 	SlideEnd    int
+	SlideFlick  int
 	SlideHidden int
 	Direction   struct {
 		Total int
@@ -44,17 +44,18 @@ type NoteCount struct {
 }
 
 type Distribution struct {
-	Note []float64
-	Hit  []float64
+	Note []int
+	Hit  []int
 }
 
 // MapInfoBasic 将会放入数据库存档的数据部分
 type MapInfoBasic struct {
 	BpmInfo
-	IrregularInfo
+	//IrregularInfo
 	TotalNote int
 	TotalTime float64
 	TotalNPS  float64
+	SPRhythm  bool
 }
 
 // MapInfoStandard 基础部分，不要求正常谱面
@@ -96,8 +97,8 @@ type MapDifficultyExtend struct {
 }
 
 type MapInfo struct {
-	MapInfoStandard       MapInfoStandard
-	MapInfoExtend         interface{} // MapInfoExtend
-	MapDifficultyStandard MapDifficultyStandard
-	MapDifficultyExtend   interface{} // MapDifficultyExtend
+	MapInfo MapInfoStandard
+	//MapInfoExtend         interface{} // MapInfoExtend
+	MapDifficulty MapDifficultyStandard
+	//MapDifficultyExtend   interface{} // MapDifficultyExtend
 }

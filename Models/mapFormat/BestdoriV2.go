@@ -45,20 +45,14 @@ func (formatChart BestdoriV2Chart) Len() int {
 }
 
 func (formatChart BestdoriV2Chart) Less(i, j int) bool {
-	if formatChart[i].Beat() < formatChart[j].Beat() {
-		if formatChart[i].Lane() < formatChart[j].Lane() {
-			return true
-		}
+	if formatChart[i].Beat() == formatChart[j].Beat() {
+		return formatChart[i].Lane() < formatChart[j].Lane()
 	}
-	return false
+	return formatChart[i].Beat() < formatChart[j].Beat()
 }
 
 func (formatChart BestdoriV2Chart) Swap(i, j int) {
 	formatChart[i], formatChart[j] = formatChart[j], formatChart[i]
-}
-
-type ChartBestdoriV2 struct {
-	chart BestdoriV2Chart
 }
 
 func fixLane(lane float64, noteHidden bool) (fix float64) {
@@ -85,7 +79,7 @@ func (formatChart BestdoriV2Chart) Decode() (Chart Chart) {
 			// 过滤掉节拍异常的音符
 			continue
 		}
-		if formatNote.Type == "Single" {
+		if formatNote.Type == "Single" || formatNote.Type == "Directional" {
 			// 检测到该音符是单点音符
 			// 注入基本信息
 			note = Note{
@@ -109,7 +103,7 @@ func (formatChart BestdoriV2Chart) Decode() (Chart Chart) {
 			note = Note{
 				Type: NoteTypeBpm,
 				BPM:  math.Abs(formatNote.BPM),
-				Beat: fixLane(formatNote.Beat_, false),
+				Beat: formatNote.Beat(),
 			}
 			Chart = append(Chart, note)
 		} else if formatNote.Type == "Slide" || formatNote.Type == "Long" {
@@ -145,7 +139,7 @@ func (formatChart BestdoriV2Chart) Decode() (Chart Chart) {
 				}
 				Chart = append(Chart, note)
 				// 注入绿条中间键、尾键
-				for i := 1; i < connectionsCount-1; i++ {
+				for i := 1; i < connectionsCount; i++ {
 					if formatNote.Connections[i].Beat_ < 0 {
 						// 过滤掉节拍异常的音符
 						continue
@@ -159,8 +153,10 @@ func (formatChart BestdoriV2Chart) Decode() (Chart Chart) {
 						Status: SlideEnd,
 						Flick:  formatNote.Connections[i].Flick,
 					}
-					Chart[len(Chart)-1].Status = SlideTick
-					Chart[len(Chart)-1].Flick = false
+					if i != 1 {
+						Chart[len(Chart)-1].Status = SlideTick
+						Chart[len(Chart)-1].Flick = false
+					}
 					Chart = append(Chart, note)
 				}
 			}
@@ -179,15 +175,33 @@ func (formatChart BestdoriV2Chart) Decode() (Chart Chart) {
 			currentBPM = Chart[i].BPM
 		}
 	}
+	// 空谱面特殊处理
+	if Chart.Len() == 0 {
+		Chart = append(Chart, Note{
+			Type:      NoteTypeBpm,
+			BPM:       120,
+			Beat:      0,
+			Time:      0,
+			Lane:      0,
+			Direction: 0,
+			Pos:       0,
+			Status:    0,
+			Flick:     false,
+			Hidden:    false,
+		})
+	}
 	return Chart
 }
 
-func typeConvert(typeNum NoteType) (typeString string) {
-	if typeNum == NoteTypeBpm {
+func typeConvert(note Note) (typeString string) {
+	if note.Type == NoteTypeBpm {
 		return "BPM"
-	} else if typeNum == NoteTypeSingle {
+	} else if note.Type == NoteTypeSingle {
+		if note.Direction != 0 {
+			return "Directional"
+		}
 		return "Single"
-	} else if typeNum == NoteTypeSlide {
+	} else if note.Type == NoteTypeSlide {
 		return "Slide"
 	}
 	return ""
@@ -236,7 +250,7 @@ func (chart Chart) EncodeBestdoriV2() (formatChart BestdoriV2Chart, err error) {
 			}
 		} else {
 			formatNote := BestdoriV2Note{
-				Type: typeConvert(note.Type),
+				Type: typeConvert(note),
 				BPM:  note.BPM,
 			}
 			formatNote.Direction, formatNote.Width = directionConvert(note.Direction)

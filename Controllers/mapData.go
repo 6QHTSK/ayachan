@@ -5,7 +5,6 @@ import (
 	"ayachanV2/Services"
 	"ayachanV2/utils"
 	"github.com/gin-gonic/gin"
-	"net/http"
 	"strconv"
 )
 
@@ -35,8 +34,9 @@ func MapDataFromBestdori(c *gin.Context) {
 		return
 	}
 
-	BestdoriV2map, err := Services.GetMapData(chartID, diff)
-	if utils.ErrorHandle(c, http.StatusNotFound, err) {
+	BestdoriV2map, errCode, err := Services.GetMapData(chartID, diff)
+	if err != nil {
+		utils.ErrorHandle(c, errCode, err)
 		return
 	}
 

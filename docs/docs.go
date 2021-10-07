@@ -673,13 +673,13 @@ var doc = `{
                     "description": "MapDifficultyExtend"
                 },
                 "mapDifficultyStandard": {
-                    "$ref": "#/definitions/Models.MapDifficultyStandard"
+                    "$ref": "#/definitions/Models.MapDifficulty"
                 },
                 "mapInfoExtend": {
                     "description": "MapInfoExtend"
                 },
                 "mapInfoStandard": {
-                    "$ref": "#/definitions/Models.MapInfoStandard"
+                    "$ref": "#/definitions/Models.MapInfo"
                 },
                 "result": {
                     "type": "boolean"
@@ -711,7 +711,7 @@ var doc = `{
                 }
             }
         },
-        "Models.MapDifficultyStandard": {
+        "Models.MapDifficulty": {
             "type": "object",
             "properties": {
                 "blueWhiteDifficulty": {
@@ -731,7 +731,7 @@ var doc = `{
                 }
             }
         },
-        "Models.MapInfoStandard": {
+        "Models.MapInfo": {
             "type": "object",
             "properties": {
                 "bpmhigh": {

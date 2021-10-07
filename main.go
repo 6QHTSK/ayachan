@@ -2,8 +2,10 @@ package main
 
 import (
 	"ayachanV2/Config"
+	"ayachanV2/Databases"
 	"ayachanV2/Router"
 	"fmt"
+	"log"
 )
 
 // @title ayachan API
@@ -12,7 +14,7 @@ import (
 
 // @contact.name 6QHTSK
 
-// @license.name Apache 2.0
+// @license.name MIT
 // @license.url https://mit-license.org/
 
 // @host 127.0.0.1:8080
@@ -20,7 +22,18 @@ import (
 
 func main() {
 	fmt.Println("Hello World!")
+	defer Databases.SqlDB.Close()
 	Config.InitConfig()
+	lastUpdate, err := Databases.GetLastUpdate()
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+	Config.SetLastUpdate(lastUpdate)
+
+	//errCode, err := Services.BestdoriSyncAll()
+	//if err != nil {
+	//	log.Fatalln(errCode,err.Error())
+	//}
 
 	router := Router.InitRouter()
 

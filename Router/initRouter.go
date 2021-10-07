@@ -24,11 +24,12 @@ func InitAPIV2(router *gin.Engine) {
 	{
 		v2.GET("/version", Controllers.GetVersion)
 		// 展示谱面橱窗和详细信息
-		chartDisplay := v2.Group("/chart-display")
-		{
-			chartDisplay.GET("/")
-			chartDisplay.GET("/:chartID")
-		}
+		//chartDisplay := v2.Group("/chart-display")
+		//{
+		//	chartDisplay.GET("/")
+		//	chartDisplay.GET("/:chartID")
+		//}
+		v2.StaticFile("/chart-display", "songList.json")
 		// 计算Bestdori谱面信息
 		chartInfo := v2.Group("/map-info")
 		{
@@ -41,9 +42,9 @@ func InitAPIV2(router *gin.Engine) {
 			bestdoriInfo.GET("/charter-post-rank", Controllers.CharterPostRank)
 			bestdoriInfo.GET("/charter-like-rank", Controllers.CharterLikeRank)
 			bestdoriInfo.GET("/song-like-rank", Controllers.SongLikeRank)
-			bestdoriInfo.GET("/charter-list", Controllers.CharterList)
+			//bestdoriInfo.GET("/charter-list", Controllers.CharterList)
 			// TODO BestdoriInfo Add Other API
-			bestdoriInfoCharter := bestdoriInfo.Group("/charter/:charter")
+			/*bestdoriInfoCharter := bestdoriInfo.Group("/charter/:charter")
 			{
 				bestdoriInfoCharter.GET("/basic-info", Controllers.CharterSelfBasicInfo)
 				bestdoriInfoCharter.GET("/post", Controllers.CharterSelfPost)
@@ -51,7 +52,11 @@ func InitAPIV2(router *gin.Engine) {
 				bestdoriInfoCharter.GET("/note-rank", Controllers.CharterSelfNoteRank)
 				bestdoriInfoCharter.GET("/time-rank", Controllers.CharterSelfTimeRank)
 				bestdoriInfoCharter.GET("/nps-rank", Controllers.CharterSelfNPSRank)
-				// TODO BestdoriInfoCharter Add Other API
+			}*/
+			sync := bestdoriInfo.Group("/sync")
+			{
+				sync.GET("/", Controllers.SyncRand)
+				sync.GET("/:chartID", Controllers.SyncChartID)
 			}
 		}
 		// 谱面格式读取和转换

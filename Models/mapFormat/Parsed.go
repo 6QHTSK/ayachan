@@ -1,5 +1,7 @@
 package mapFormat
 
+import "math"
+
 type HandType int
 
 const (
@@ -44,4 +46,25 @@ func (chart Chart) InitParseChart() (ParsedChart ParsedChart) {
 		})
 	}
 	return ParsedChart
+}
+
+func (note ParsedNote) GetIntervalFront() (interval float64) {
+	if note.NotePrevious == nil {
+		return math.Inf(1)
+	}
+	return math.Max(0.025, note.Time-note.NotePrevious.Time)
+}
+
+func (note ParsedNote) GetIntervalBack() (interval float64) {
+	if note.NoteAfter == nil {
+		return math.Inf(1)
+	}
+	return math.Max(0.025, note.NoteAfter.Time-note.Time)
+}
+
+func (note ParsedNote) GetGapFront() (gap float64) {
+	if note.NotePrevious == nil {
+		return 0
+	}
+	return note.Lane - note.NotePrevious.Lane
 }

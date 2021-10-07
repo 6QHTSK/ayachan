@@ -1,18 +1,31 @@
 package Services
 
-import "ayachanV2/Models/mapFormat"
+import (
+	"ayachanV2/Config"
+	"ayachanV2/Models/mapFormat"
+	"ayachanV2/utils"
+	"fmt"
+	"net/http"
+	"net/url"
+)
 
-// getCustomMapData 从Bestdori拉取指定ChartID的自制谱面
-func getCustomMapData(chartID int) (chart mapFormat.BestdoriV2Chart, err error) {
-	return nil, err
-}
-
-// getOfficialMapData 从Bestdori拉取指定ChartID的官方谱面
-func getOfficialMapData(chartID int, diff int) (chart mapFormat.BestdoriV2Chart, err error) {
-	return nil, err
+type mapDataRequest struct {
+	Result bool                      `json:"result"`
+	Map    mapFormat.BestdoriV2Chart `json:"map"`
 }
 
 // GetMapData 从Bestdori拉取指定ChartID的谱面
-func GetMapData(chartID int, diff int) (chart mapFormat.BestdoriV2Chart, err error) {
-	return nil, err
+func GetMapData(chartID int, diff int) (Map mapFormat.BestdoriV2Chart, errorCode int, err error) {
+	mapDataParam, err := url.Parse(fmt.Sprintf("%d/map?diff=%d", chartID, diff))
+	mapDataUrl := Config.BestdoriAPIUrl.ResolveReference(mapDataParam)
+	var request mapDataRequest
+	errorCode, err = utils.HttpGet(mapDataUrl.String(), &request)
+	if err != nil {
+		return nil, errorCode, err
+	}
+	if request.Result {
+		return request.Map, http.StatusOK, nil
+	} else {
+		return nil, http.StatusInternalServerError, fmt.Errorf("解析错误出现故障")
+	}
 }

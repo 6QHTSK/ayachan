@@ -36,12 +36,10 @@ func (chart Chart) Len() int {
 }
 
 func (chart Chart) Less(i, j int) bool {
-	if chart[i].Beat < chart[j].Beat {
-		if chart[i].Lane < chart[j].Lane {
-			return true
-		}
+	if chart[i].Beat == chart[j].Beat {
+		return chart[i].Lane < chart[j].Lane
 	}
-	return false
+	return chart[i].Beat < chart[j].Beat
 }
 
 func (chart Chart) Swap(i, j int) {
