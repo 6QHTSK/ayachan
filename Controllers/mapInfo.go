@@ -42,7 +42,11 @@ func MapInfoFromBestdori(c *gin.Context) {
 		utils.ErrorHandle(c, errCode, err)
 		return
 	}
-
+	result, err := BestdoriV2Map.MapCheck()
+	if !result {
+		utils.ErrorHandle(c, http.StatusBadRequest, err)
+		return
+	}
 	Map := BestdoriV2Map.Decode()
 	MapInfo := Services.MapInfoGetter(Map, chartFormat.DiffType(diff))
 

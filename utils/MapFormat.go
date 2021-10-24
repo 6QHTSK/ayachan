@@ -41,6 +41,10 @@ func ReadMap(c *gin.Context) (Map mapFormat.Chart, Options map[string]string, su
 			ErrorHandle(c, http.StatusBadRequest, fmt.Errorf("无法处理传入谱面"))
 			return Map, Options, false
 		}
+		result, err := input.Map.MapCheck()
+		if !result {
+			ErrorHandle(c, http.StatusBadRequest, err)
+		}
 		Map = input.Map.Decode()
 	} else {
 		ErrorHandle(c, http.StatusBadRequest, fmt.Errorf("不支持的传入格式：%s", inputOptions.MapFormatIn))

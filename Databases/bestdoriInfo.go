@@ -5,7 +5,7 @@ import (
 )
 
 func GetCharterPostRank(page int, limit int) (list []chartFormat.CharterRankItem, err error) {
-	rows, err := SqlDB.Query("select @rank := @rank + 1 as 'rank', unpC.* from (select bestdoriSongList.username,bestdoriAuthorList.nickname,count(id) postCount from bestdoriSongList,bestdoriAuthorList where bestdoriSongList.username = bestdoriAuthorList.username and chartLevel >= 21 and diff >= 3 group by bestdoriSongList.username having count(id) > 5 order by count(id) desc LIMIT ? OFFSET ?) as unpC, (select @rank:=?) as r", limit, page*limit, page*limit)
+	rows, err := SqlDB.Query("select @rank := @rank + 1 as 'rank', unpC.* from (select username,nickname,count(DISTINCT (title,artists)) postCount from BestdoriFanMade,BestdoriAuthorList where BestdoriFanMade.author = BestdoriAuthorList.username and chartLevel >= 21 and diff >= 3 group by BestdoriFanMade.author having count(1) > 5 order by count(1) desc LIMIT ? OFFSET ?) as unpC, (select @rank:=?) as r", limit, page*limit, page*limit)
 	if err != nil {
 		return list, err
 	}
@@ -21,7 +21,7 @@ func GetCharterPostRank(page int, limit int) (list []chartFormat.CharterRankItem
 	return list, nil
 }
 func GetCharterLikeRank(page int, limit int) (list []chartFormat.CharterRankItem, err error) {
-	rows, err := SqlDB.Query("select @rank := @rank + 1 as 'rank', unpC.* from (select bestdoriSongList.username,bestdoriAuthorList.nickname,SUM(likes) likeCount from bestdoriSongList,bestdoriAuthorList where bestdoriSongList.username = bestdoriAuthorList.username and chartLevel >= 21 and diff >= 3 group by bestdoriSongList.username having count(id) > 5 order by SUM(likes) desc LIMIT ? OFFSET ?) as unpC, (select @rank:= ?) as r", limit, page*limit, page*limit)
+	rows, err := SqlDB.Query("select @rank := @rank + 1 as 'rank', unpC.* from (select username,nickname,SUM(likes) likeCount from BestdoriFanMade,BestdoriAuthorList where BestdoriFanMade.author = BestdoriAuthorList.username and chartLevel >= 21 and diff >= 3 group by BestdoriFanMade.author having count(1) > 5 order by SUM(likes) desc LIMIT ? OFFSET ?) as unpC, (select @rank:= ?) as r", limit, page*limit, page*limit)
 	if err != nil {
 		return list, err
 	}
@@ -37,7 +37,7 @@ func GetCharterLikeRank(page int, limit int) (list []chartFormat.CharterRankItem
 	return list, nil
 }
 func SongLikeRank(page int, limit int) (list []chartFormat.SongRankItem, err error) {
-	rows, err := SqlDB.Query("select @rank := @rank + 1 as 'rank', unpC.* from (select chartID, title, artists ,bestdoriSongList.username,bestdoriAuthorList.nickname, diff , chartLevel , likes from bestdoriSongList,bestdoriAuthorList where bestdoriSongList.username = bestdoriAuthorList.username order by likes desc LIMIT ? OFFSET ?) as unpC, (select @rank:=?) as r", limit, page*limit, page*limit)
+	rows, err := SqlDB.Query("select @rank := @rank + 1 as 'rank', unpC.* from (select chartID, title, artists ,BestdoriFanMade.author,BestdoriAuthorList.nickname, diff , chartLevel , likes from BestdoriFanMade,BestdoriAuthorList where BestdoriFanMade.author = BestdoriAuthorList.username order by likes desc LIMIT ? OFFSET ?) as unpC, (select @rank:=?) as r", limit, page*limit, page*limit)
 	if err != nil {
 		return list, err
 	}
@@ -53,7 +53,7 @@ func SongLikeRank(page int, limit int) (list []chartFormat.SongRankItem, err err
 	return list, nil
 }
 func GetCharterList() (list []chartFormat.Author, err error) {
-	//rows, err := SqlDB.Query("select bestdoriSongList.username,bestdoriAuthorList.nickname from bestdoriSongList,bestdoriAuthorList where bestdoriSongList.username = bestdoriAuthorList.username and chartLevel >= 21 and diff >= 3 group by username having COUNT(id) > 5")
+	//rows, err := SqlDB.Query("select BestdoriFanMade.username,BestdoriAuthorList.nickname from BestdoriFanMade,BestdoriAuthorList where BestdoriFanMade.username = BestdoriAuthorList.username and chartLevel >= 21 and diff >= 3 group by username having COUNT(id) > 5")
 	//if err != nil{
 	//	return list,err
 	//}

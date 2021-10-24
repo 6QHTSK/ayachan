@@ -3,6 +3,7 @@ package chartFormat
 import (
 	"ayachanV2/Models"
 	"ayachanV2/Models/mapFormat"
+	"time"
 )
 
 type DiffType int
@@ -35,7 +36,7 @@ type BestdoriChartItem struct {
 	Official            bool                      `json:"official"`        //是否为官谱
 	Likes               int                       `json:"likes,omitempty"` // 喜爱数
 	PostTime            uint64                    `json:"time,omitempty"`  // 时间戳
-	LastUpdateTime      uint64                    `json:"last_update"`
+	LastUpdateTime      time.Time                 `json:"last_update"`
 	Chart               mapFormat.BestdoriV2Chart `json:"chart,omitempty"` // 谱面
 	Models.MapInfoBasic                           // 一些易得的谱面数据 用于某些项
 }

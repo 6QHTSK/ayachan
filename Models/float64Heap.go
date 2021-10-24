@@ -1,6 +1,9 @@
 package Models
 
-import "math"
+import (
+	"container/heap"
+	"math"
+)
 
 type Float64Heap []float64
 
@@ -22,10 +25,10 @@ func (h *Float64Heap) Pop() interface{} {
 	return x
 }
 
-// GetTopRankAverage 从10%～60%部分
+// GetTopRankAverage 从5%～30%部分
 func (h *Float64Heap) GetTopRankAverage() (average float64) {
-	startRank := int(math.Floor(float64(h.Len()) * 0.1))
-	endRank := int(math.Ceil(float64(h.Len()) * 0.6))
+	startRank := int(math.Floor(float64(h.Len()) * 0.05))
+	endRank := int(math.Ceil(float64(h.Len()) * 0.3))
 	if endRank > h.Len()-1 {
 		endRank = h.Len() - 1
 	}
@@ -38,7 +41,7 @@ func (h *Float64Heap) GetTopRankAverage() (average float64) {
 	sum := 0.0
 	for i := 0; i < endRank; i++ {
 		if i >= startRank {
-			sum += h.Pop().(float64)
+			sum += heap.Pop(h).(float64)
 		} else {
 			h.Pop()
 		}

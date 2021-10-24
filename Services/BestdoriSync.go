@@ -3,6 +3,7 @@ package Services
 import (
 	"ayachanV2/Config"
 	"ayachanV2/Databases"
+	"ayachanV2/Models"
 	"ayachanV2/Models/chartFormat"
 	"ayachanV2/utils"
 	"fmt"
@@ -69,19 +70,32 @@ func BestdoriSyncPage(page int) (totalCount int, errCode int, err error) {
 		return totalCount, errCode, err
 	}
 	var wg sync.WaitGroup
+	ch := make(chan bool, 7)
 	for i, item := range request.List {
-		go func(i int, item int) {
+		go func(i int, item int, ch chan bool) {
+			defer func() {
+				<-ch
+				err := recover()
+				if err != nil {
+					log.Printf("Panic While Updating Chart #%d", item)
+				}
+				wg.Done()
+			}()
+			ch <- true
 			wg.Add(1)
-			errCode, err = BestdoriSyncID(item, 3)
-			if err != nil {
-				log.Printf("Failed to update Chart %d : Error %s", item, err.Error())
-				//return totalCount,errCode,err
+			var j int
+			for j = 1; j <= 5; j++ {
+				errCode, err = BestdoriSyncID(item, 3)
+				if err == nil {
+					//log.Printf("Success Update Chart %d [Attemp %d]", item, j)
+					break
+				} else {
+					log.Printf("Failed to update Chart %d [Attemp %d] : Error %s", item, j, err.Error())
+				}
 			}
-			log.Printf("Chart %d/%d : [%d]", i, 50, item)
-			wg.Done()
-		}(i, item)
-		time.Sleep(time.Millisecond * 200)
+		}(i, item, ch)
 	}
+	time.Sleep(time.Second * 2)
 	wg.Wait()
 	return request.Count, http.StatusOK, nil
 }
@@ -95,13 +109,19 @@ func BestdoriSyncID(chartID int, diff int) (errorCode int, err error) {
 		return errorCode, err
 	}
 	bestdoriChartItem := request.Info
-	//BestdoriV2Map, errorCode, err := GetMapData(chartID, diff)
-	//if  err != nil{
-	//	return errorCode,err
-	//}
 
+	result, err := request.Info.Chart.MapCheck()
+	if !result {
+		log.Printf("谱面无法解析")
+		return http.StatusBadRequest, err
+	}
 	Map := request.Info.Chart.Decode()
-	bestdoriChartItem.MapInfoBasic, _, _, _ = basicInfoGetter(Map)
+	bestdoriChartItem.MapInfoBasic, _, _, _, _ = basicInfoGetter(Map)
+	_, bestdoriChartItem.IrregularInfo = ParseMap(Map)
+
+	if bestdoriChartItem.IrregularInfo.Irregular == Models.RegularTypeUnknown {
+		log.Printf("分析异常chartID：%d", chartID)
+	}
 
 	err = Databases.UpdateBestdori(bestdoriChartItem)
 	if err != nil {

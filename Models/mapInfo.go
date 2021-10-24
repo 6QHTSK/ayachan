@@ -50,8 +50,7 @@ type Distribution struct {
 
 // MapInfoBasic 将会放入数据库存档的数据部分
 type MapInfoBasic struct {
-	BpmInfo
-	//IrregularInfo
+	IrregularInfo
 	TotalNote int
 	TotalTime float64
 	TotalNPS  float64
@@ -62,6 +61,7 @@ type MapInfoBasic struct {
 type MapInfoStandard struct {
 	MapInfoBasic
 
+	BpmInfo
 	TotalHitNote int
 	MaxScreenNPS float64
 	TotalHPS     float64
@@ -97,8 +97,8 @@ type MapDifficultyExtend struct {
 }
 
 type MapInfo struct {
-	MapInfo MapInfoStandard
-	//MapInfoExtend         interface{} // MapInfoExtend
-	MapDifficulty MapDifficultyStandard
-	//MapDifficultyExtend   interface{} // MapDifficultyExtend
+	MapInfo             MapInfoStandard
+	MapInfoExtend       interface{} // MapInfoExtend
+	MapDifficulty       MapDifficultyStandard
+	MapDifficultyExtend interface{} // MapDifficultyExtend
 }

@@ -8,6 +8,8 @@ const (
 	UnknownHand HandType = iota
 	LeftHand
 	RightHand
+	TryLeftHand
+	TryRightHand
 )
 
 type ParsedNote struct {
@@ -38,6 +40,9 @@ func (chart ParsedChart) Swap(i, j int) {
 
 func (chart Chart) InitParseChart() (ParsedChart ParsedChart) {
 	for _, note := range chart {
+		if note.Type == NoteTypeBpm || note.Type == NoteTypeSlide && note.Hidden {
+			continue
+		}
 		ParsedChart = append(ParsedChart, ParsedNote{
 			Note:         note,
 			Hand:         UnknownHand,

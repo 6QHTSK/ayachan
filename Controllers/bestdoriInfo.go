@@ -1,7 +1,6 @@
 package Controllers
 
 import (
-	"ayachanV2/Config"
 	"ayachanV2/Databases"
 	"ayachanV2/Models/chartFormat"
 	"ayachanV2/Services"
@@ -10,7 +9,6 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"time"
 )
 
 type InfoOutput struct {
@@ -312,11 +310,21 @@ func CharterSelfNPSRank(c *gin.Context) {
 	})
 }
 
+func SyncAll(c *gin.Context) {
+	go func() {
+		errCode, err := Services.BestdoriSyncAll()
+		if err != nil {
+			log.Printf("SyncRand %d,%s\n", errCode, err.Error())
+		}
+	}()
+	c.JSON(http.StatusAccepted, InfoOutput{Result: true})
+}
+
 func SyncRand(c *gin.Context) {
-	if time.Since(Config.LastUpdate) < time.Hour {
-		c.JSON(http.StatusForbidden, InfoOutput{Result: false})
-		return
-	}
+	//if time.Since(Config.LastUpdate) < time.Hour {
+	//	c.JSON(http.StatusForbidden, InfoOutput{Result: false})
+	//	return
+	//}
 	go func() {
 		errCode, err := Services.BestdoriSyncRand()
 		if err != nil {

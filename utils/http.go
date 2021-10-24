@@ -16,7 +16,7 @@ type ErrorRequests struct {
 
 func HttpGet(url string, object interface{}) (errorCode int, err error) {
 	var Client = http.Client{
-		Timeout: time.Second * 10, // 10秒超时
+		Timeout: time.Second * 20, // 20秒超时
 	}
 
 	res, err := Client.Get(url)

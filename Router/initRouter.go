@@ -56,6 +56,7 @@ func InitAPIV2(router *gin.Engine) {
 			sync := bestdoriInfo.Group("/sync")
 			{
 				sync.GET("/", Controllers.SyncRand)
+				sync.GET("/all", Controllers.SyncAll)
 				sync.GET("/:chartID", Controllers.SyncChartID)
 			}
 		}

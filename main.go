@@ -6,6 +6,7 @@ import (
 	"ayachanV2/Router"
 	"fmt"
 	"log"
+	"time"
 )
 
 // @title ayachan API
@@ -24,9 +25,11 @@ func main() {
 	fmt.Println("Hello World!")
 	defer Databases.SqlDB.Close()
 	Config.InitConfig()
+	var lastUpdate time.Time
 	lastUpdate, err := Databases.GetLastUpdate()
 	if err != nil {
-		log.Fatalln(err.Error())
+		//log.Fatalln(err.Error())
+		log.Println("读表失败，表为空，最后更新设为0")
 	}
 	Config.SetLastUpdate(lastUpdate)
 
