@@ -24,8 +24,8 @@ type BpmInfo struct {
 }
 
 type IrregularInfo struct {
-	Irregular     RegularType // 存在多压/交叉（出张）0 失败 1 标准 2 非标准
-	IrregularInfo string      // 无法分析的第一个错误情况
+	Irregular     RegularType `json:"irregular"`      // 存在多压/交叉（出张）0 失败 1 标准 2 非标准
+	IrregularInfo string      `json:"irregular_info"` // 无法分析的第一个错误情况
 }
 
 type NoteCount struct {
@@ -51,10 +51,10 @@ type Distribution struct {
 // MapInfoBasic 将会放入数据库存档的数据部分
 type MapInfoBasic struct {
 	IrregularInfo
-	TotalNote int
-	TotalTime float64
-	TotalNPS  float64
-	SPRhythm  bool
+	TotalNote int     `json:"total_note"`
+	TotalTime float64 `json:"total_time"`
+	TotalNPS  float64 `json:"total_nps"`
+	SPRhythm  bool    `json:"sp_rhythm"`
 }
 
 // MapInfoStandard 基础部分，不要求正常谱面

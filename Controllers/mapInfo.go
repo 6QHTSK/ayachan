@@ -75,6 +75,7 @@ func MapInfo(c *gin.Context) {
 	diff, err := strconv.Atoi(Options["diff"])
 	if err != nil {
 		utils.ErrorHandle(c, http.StatusBadRequest, fmt.Errorf("无法解析body参数：diff"))
+		return
 	}
 	MapInfo := Services.MapInfoGetter(Map, chartFormat.DiffType(diff))
 

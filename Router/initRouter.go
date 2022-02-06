@@ -37,11 +37,14 @@ func InitAPIV2(router *gin.Engine) {
 			chartInfo.POST("/", Controllers.MapInfo)
 		}
 		// 获得爬虫获得的Bestdori信息
-		bestdoriInfo := v2.Group("/bestdori-info")
+		bestdoriInfo := v2.Group("/bestdori")
 		{
 			bestdoriInfo.GET("/charter-post-rank", Controllers.CharterPostRank)
 			bestdoriInfo.GET("/charter-like-rank", Controllers.CharterLikeRank)
 			bestdoriInfo.GET("/song-like-rank", Controllers.SongLikeRank)
+
+			bestdoriInfo.GET("/list", Controllers.BestdoriFanMadeSearch)
+			bestdoriInfo.GET("/list/:chartID", Controllers.BestdoriFanMadeGet)
 			//bestdoriInfo.GET("/charter-list", Controllers.CharterList)
 			// TODO BestdoriInfo Add Other API
 			/*bestdoriInfoCharter := bestdoriInfo.Group("/charter/:charter")
@@ -56,8 +59,9 @@ func InitAPIV2(router *gin.Engine) {
 			sync := bestdoriInfo.Group("/sync")
 			{
 				sync.GET("/", Controllers.SyncRand)
-				sync.GET("/all", Controllers.SyncAll)
+				//sync.GET("/all", Controllers.SyncAll)
 				sync.GET("/:chartID", Controllers.SyncChartID)
+				//sync.GET("/refresh-blacklist", Controllers.SyncBlackList)
 			}
 		}
 		// 谱面格式读取和转换

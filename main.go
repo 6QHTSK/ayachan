@@ -2,9 +2,9 @@ package main
 
 import (
 	"ayachanV2/Config"
+	"ayachanV2/Controllers"
 	"ayachanV2/Databases"
 	"ayachanV2/Router"
-	"fmt"
 	"log"
 	"time"
 )
@@ -22,7 +22,6 @@ import (
 // @BasePath /v2
 
 func main() {
-	fmt.Println("Hello World!")
 	defer Databases.SqlDB.Close()
 	Config.InitConfig()
 	var lastUpdate time.Time
@@ -33,15 +32,17 @@ func main() {
 	}
 	Config.SetLastUpdate(lastUpdate)
 
-	//errCode, err := Services.BestdoriSyncAll()
+	//errCode, err := Services.BestdoriFanMadeSyncAll()
 	//if err != nil {
-	//	log.Fatalln(errCode,err.Error())
+	//	log.Fatalln(errCode, err.Error())
 	//}
+
+	Controllers.CronSync()
 
 	router := Router.InitRouter()
 
-	Router.InitSwaggerDoc(router)
+	//Router.InitSwaggerDoc(router)
 	Router.InitAPIV2(router)
-
+	//
 	_ = router.Run("0.0.0.0:8080")
 }

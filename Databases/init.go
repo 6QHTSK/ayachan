@@ -1,16 +1,20 @@
 package Databases
 
 import (
-	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jmoiron/sqlx"
 	"log"
 )
 
-var SqlDB *sql.DB
+var SqlDB *sqlx.DB
 
 func init() {
+	initMysql()
+}
+
+func initMysql() {
 	var err error
-	SqlDB, err = sql.Open("mysql", databaseInfo)
+	SqlDB, err = sqlx.Open("mysql", databaseInfo)
 	if err != nil {
 		log.Fatal(err.Error())
 	}

@@ -13,7 +13,7 @@ const (
 	Diff_Normal
 	Diff_Hard
 	Diff_Expert
-	Diff_SpecialC
+	Diff_Special
 )
 
 type Author struct {
@@ -22,7 +22,6 @@ type Author struct {
 }
 
 type BestdoriChartItem struct {
-	// id = ChartID * 10 + Official ? 9 : Diff json不
 	ChartID int      `json:"id"`      // Bestdori的谱面ID
 	Title   string   `json:"title"`   // 谱面的标题
 	Artists string   `json:"artists"` // 谱面的艺术家
@@ -33,22 +32,29 @@ type BestdoriChartItem struct {
 		Cover string `json:"cover"`
 		Audio string `json:"audio"`
 	} `json:"song_url"` // 谱面资源
-	Official            bool                      `json:"official"`        //是否为官谱
 	Likes               int                       `json:"likes,omitempty"` // 喜爱数
 	PostTime            uint64                    `json:"time,omitempty"`  // 时间戳
 	LastUpdateTime      time.Time                 `json:"last_update"`
+	Content             string                    `json:"content"`
 	Chart               mapFormat.BestdoriV2Chart `json:"chart,omitempty"` // 谱面
 	Models.MapInfoBasic                           // 一些易得的谱面数据 用于某些项
 }
 
+type BestdoriChartUpdateItem struct {
+	ChartID  int    `json:"chart_id"`
+	Username string `json:"username"`
+	Nickname string `json:"nickname"`
+	Diff     int    `json:"diff"`
+	Level    int    `json:"chart_level"`
+	Likes    int    `json:"likes"`
+}
+
 type CharterRankItem struct {
-	Rank   int // 排名
 	Author Author
 	Count  int // 计数
 }
 
 type SongRankItem struct {
-	Rank    int      // 排名
 	ChartID int      `json:"id"`      // Bestdori的谱面ID
 	Title   string   `json:"title"`   // 谱面的标题
 	Artists string   `json:"artists"` // 谱面的艺术家
@@ -59,11 +65,10 @@ type SongRankItem struct {
 }
 
 type CharterSelfInfoBasic struct {
-	Charter         Author
-	TotalPost       int
-	TotalLike       int
-	TotalNote       int
-	TotalTime       float64
-	AverageDiff     float64
-	AverageDiffRank float64
+	Charter     Author
+	TotalPost   int
+	TotalLike   int
+	TotalNote   int
+	TotalTime   float64
+	AverageDiff float64
 }
