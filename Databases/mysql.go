@@ -2,8 +2,8 @@ package Databases
 
 import (
 	"ayachanV2/Config"
+	"ayachanV2/Models/ChartFormat"
 	"ayachanV2/Models/DatabaseModel"
-	"ayachanV2/Models/chartFormat"
 	"database/sql"
 	"time"
 )
@@ -34,7 +34,7 @@ func QueryBestdoriFanMadeByLastUpdate(lastUpdate time.Time) (items []DatabaseMod
 	return items, err
 }
 
-func InsertBestdori(item chartFormat.BestdoriChartItem) (err error) {
+func InsertBestdori(item ChartFormat.BestdoriChartItem) (err error) {
 	//使用Trigger来解决黑名单问题
 	//下面的部分使用函数 返回值为BOOL即是否改变了nickname
 	var isNicknameChanged int
@@ -43,7 +43,7 @@ func InsertBestdori(item chartFormat.BestdoriChartItem) (err error) {
 	return err
 }
 
-func UpdateBestdori(item chartFormat.BestdoriChartUpdateItem) (err error) {
+func UpdateBestdori(item ChartFormat.BestdoriChartUpdateItem) (err error) {
 	var statusCode int8
 	err = SqlDB.Get(&statusCode, "SELECT updateFanMadeF(?,?,?,?,?,?)", item.ChartID, item.Username, item.Nickname, item.Diff, item.Level, item.Likes)
 	return err

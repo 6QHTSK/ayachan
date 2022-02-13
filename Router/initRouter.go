@@ -2,21 +2,17 @@ package Router
 
 import (
 	"ayachanV2/Controllers"
-	_ "ayachanV2/docs"
+	"ayachanV2/Log"
+	"ayachanV2/Midware"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	ginSwagger "github.com/swaggo/gin-swagger"
-	"github.com/swaggo/gin-swagger/swaggerFiles"
 )
 
 func InitRouter() (router *gin.Engine) {
-	router = gin.Default()
+	router = gin.New()
+	router.Use(Midware.Logger(Log.Log), gin.Recovery())
 	router.Use(cors.Default())
 	return router
-}
-
-func InitSwaggerDoc(router *gin.Engine) {
-	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
 
 func InitAPIV2(router *gin.Engine) {

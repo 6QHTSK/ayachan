@@ -2,10 +2,10 @@ package Databases
 
 import (
 	"ayachanV2/Config"
+	"ayachanV2/Log"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"github.com/meilisearch/meilisearch-go"
-	"log"
 	"time"
 )
 
@@ -23,17 +23,17 @@ func initMysql() {
 	var err error
 	SqlDB, err = sqlx.Open("mysql", Config.Config.Database.Mysql)
 	if err != nil {
-		log.Fatal(err.Error())
+		Log.Log.Fatal(err.Error())
 	}
 	SqlDB.SetMaxOpenConns(20)
 	SqlDB.SetMaxIdleConns(20)
 	err = SqlDB.Ping()
 	if err != nil {
-		log.Fatal(err.Error())
+		Log.Log.Fatal(err.Error())
 	}
 	MysqlLocation, err = time.LoadLocation("Asia/Shanghai")
 	if err != nil {
-		log.Fatal(err.Error())
+		Log.Log.Fatal(err.Error())
 	}
 }
 

@@ -1,8 +1,8 @@
-package chartFormat
+package ChartFormat
 
 import (
 	"ayachanV2/Models"
-	"ayachanV2/Models/mapFormat"
+	"ayachanV2/Models/MapFormat"
 	"time"
 )
 
@@ -36,7 +36,7 @@ type BestdoriChartItem struct {
 	PostTime            uint64                    `json:"time,omitempty"`  // 时间戳
 	LastUpdateTime      time.Time                 `json:"last_update"`
 	Content             string                    `json:"content"`
-	Chart               mapFormat.BestdoriV2Chart `json:"chart,omitempty"` // 谱面
+	Chart               MapFormat.BestdoriV2Chart `json:"chart,omitempty"` // 谱面
 	Models.MapInfoBasic                           // 一些易得的谱面数据 用于某些项
 }
 

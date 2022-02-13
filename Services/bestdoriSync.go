@@ -3,12 +3,11 @@ package Services
 import (
 	"ayachanV2/Config"
 	"ayachanV2/Databases"
+	"ayachanV2/Log"
 	"ayachanV2/Models"
-	"ayachanV2/Models/chartFormat"
+	"ayachanV2/Models/ChartFormat"
 	"ayachanV2/utils"
 	"fmt"
-	"github.com/robfig/cron/v3"
-	"log"
 	"math"
 	"math/rand"
 	"net/http"
@@ -19,7 +18,7 @@ import (
 
 type chartDataRequest struct {
 	Result bool                          `json:"result"`
-	Info   chartFormat.BestdoriChartItem `json:"info"`
+	Info   ChartFormat.BestdoriChartItem `json:"info"`
 }
 
 type chartDataList struct {
@@ -27,7 +26,7 @@ type chartDataList struct {
 	Count  int  `json:"count"`
 	List   []struct {
 		ChartID int                `json:"id"`
-		Author  chartFormat.Author `json:"author"`
+		Author  ChartFormat.Author `json:"author"`
 		Diff    int                `json:"diff"`
 		Level   int                `json:"level"`
 		Likes   int                `json:"likes"`
@@ -41,12 +40,13 @@ func BestdoriFanMadeSyncAll() (errCode int, err error) {
 	}
 	totalPage := int(math.Ceil(float64(totalCount) / 50.0))
 	for i := 1; i < totalPage; i++ {
-		log.Printf("Page %d/%d\n", i, totalPage)
+		Log.Log.Debugf("Page %d/%d\n", i, totalPage)
 		_, errCode, err := BestdoriFanMadeSyncPage(i)
 		if err != nil {
 			return errCode, err
 		}
 	}
+	Log.Log.Info("BestdoriFanMadeSyncAll Success")
 	return http.StatusOK, nil
 }
 
@@ -58,13 +58,13 @@ func BestdoriFanMadeSyncRand() (errCode int, err error) {
 	totalPage := int(math.Ceil(float64(totalCount) / 50.0))
 	syncList := []int{1, 2, 3, rand.Intn(totalPage), rand.Intn(totalPage), rand.Intn(totalPage)}
 	for _, item := range syncList {
-		log.Printf("Sync Page %d", item)
+		Log.Log.Debugf("Sync Page %d", item)
 		_, errCode, err := BestdoriFanMadeSyncPage(item)
 		if err != nil {
 			return errCode, err
 		}
 	}
-	log.Printf("SyncFinish")
+	Log.Log.Info("BestdoriFanMadeSyncRand Success")
 	return http.StatusOK, nil
 }
 
@@ -78,7 +78,7 @@ func BestdoriFanMadeSyncPage(page int) (totalCount int, errCode int, err error) 
 			break
 		}
 		if err != nil {
-			log.Printf("Failed to fetch page info %d [Attempt %d]", page, i)
+			Log.Log.Warningf("Failed to fetch page info %d [Attempt %d]", page, i)
 			if i == 5 {
 				return totalCount, errCode, err
 			}
@@ -94,7 +94,7 @@ func BestdoriFanMadeSyncPage(page int) (totalCount int, errCode int, err error) 
 		}
 		if res {
 			// Update Author's nickname & like count
-			err = Databases.UpdateBestdori(chartFormat.BestdoriChartUpdateItem{
+			err = Databases.UpdateBestdori(ChartFormat.BestdoriChartUpdateItem{
 				ChartID:  item.ChartID,
 				Username: item.Author.Username,
 				Nickname: item.Author.Nickname,
@@ -108,7 +108,7 @@ func BestdoriFanMadeSyncPage(page int) (totalCount int, errCode int, err error) 
 					<-ch
 					err := recover()
 					if err != nil {
-						log.Printf("Panic While Updating Chart #%d : %s", item, err)
+						Log.Log.Errorf("Panic While Updating Chart #%d : %s", item, err)
 					}
 					wg.Done()
 				}()
@@ -118,12 +118,13 @@ func BestdoriFanMadeSyncPage(page int) (totalCount int, errCode int, err error) 
 				for j = 1; j <= 5; j++ {
 					errCode, err = BestdoriFanMadeInsertID(item)
 					if err == nil {
-						//log.Printf("Success Update Chart %d [Attemp %d]", item, j)
-						break
+						Log.Log.Tracef("Success Update Chart %d [Attemp %d]", item, j)
+						return
 					} else {
-						log.Printf("Failed to update Chart %d [Attemp %d] : Error %s", item, j, err.Error())
+						Log.Log.Warningf("Failed to update Chart %d [Attemp %d] : Error %s", item, j, err.Error())
 					}
 				}
+				Log.Log.Warningf("Attemp times exceed!")
 			}(i, item.ChartID, ch)
 		}
 	}
@@ -144,7 +145,7 @@ func BestdoriFanMadeInsertID(chartID int) (errorCode int, err error) {
 
 	result, err := request.Info.Chart.MapCheck()
 	if !result {
-		log.Printf("谱面无法解析")
+		Log.Log.Warningf("谱面无法解析,%s", err)
 		return http.StatusBadRequest, err
 	}
 	Map := request.Info.Chart.Decode()
@@ -154,7 +155,7 @@ func BestdoriFanMadeInsertID(chartID int) (errorCode int, err error) {
 	_, bestdoriChartItem.IrregularInfo = ParseMap(Map)
 
 	if bestdoriChartItem.IrregularInfo.Irregular == Models.RegularTypeUnknown {
-		log.Printf("分析异常chartID：%d", chartID)
+		Log.Log.Errorf("分析异常chartID：%d", chartID)
 	}
 
 	RuneContent := []rune(bestdoriChartItem.Content)
@@ -191,59 +192,16 @@ func MysqlSyncToMeiliSearch() (err error) {
 				for _, doc := range documents {
 					err := Databases.AddDocument(doc)
 					if err != nil {
-						Databases.HandleErr(doc, err)
+						Log.Log.Warningf("Doc[%d] Add Failed, err: %s", doc.ChartID, err)
 						count--
 					}
 				}
 			}
 		}
-		log.Printf("MeiliSearch Sync Finish! %d documents sync!", count)
-		return nil
+		Log.Log.Infof("MeiliSearch Sync Finish! %d documents sync!", count)
 	} else {
 		// Nothing to sync
-		log.Print("MeiliSearch Sync Sleep")
-		return nil
+		Log.Log.Info("Nothing to do, MeiliSearch Sync Sleep")
 	}
-}
-
-func CronSync() {
-	c := cron.New(cron.WithSeconds())
-	// 每小时的Bestdori随机更新任务
-	_, err := c.AddFunc("@hourly", func() {
-		log.Print("Start Sync hourly")
-		_, err := BestdoriFanMadeSyncRand()
-		if err != nil {
-			log.Printf("Failed sync: Error %s", err)
-		}
-	})
-	if err != nil {
-		log.Fatalf("Cannot add hourly job:%s", err)
-	}
-	// 每分钟的Bestdori拉取第一页任务 除整点
-	_, err = c.AddFunc("0 1-59 * * * *", func() {
-		log.Print("Start Sync Mysql minutely")
-		_, _, err := BestdoriFanMadeSyncPage(0)
-		if err != nil {
-			log.Printf("Failed sync minute : Error %s", err)
-		} else {
-			log.Print("Sync Mysql Success")
-		}
-	})
-	if err != nil {
-		log.Fatalf("Cannot add minutely Mysql job:%s", err)
-	}
-	// 每分钟的MeiliSearch同步任务
-	_, err = c.AddFunc("30 * * * * *", func() {
-		log.Print("Start Sync MeiliSearch minutely")
-		err := MysqlSyncToMeiliSearch()
-		if err != nil {
-			log.Printf("Failed sync minute : Error %s", err)
-		} else {
-			log.Print("Sync MeiliSearch Success")
-		}
-	})
-	if err != nil {
-		log.Fatalf("Cannot add minutely Meilisearch job:%s", err)
-	}
-	c.Start()
+	return nil
 }

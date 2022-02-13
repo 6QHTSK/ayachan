@@ -1,7 +1,7 @@
 package Controllers
 
 import (
-	"ayachanV2/Models/chartFormat"
+	"ayachanV2/Models/ChartFormat"
 	"ayachanV2/Services"
 	"ayachanV2/utils"
 	"github.com/gin-gonic/gin"
@@ -29,7 +29,7 @@ func MapDataFromBestdori(c *gin.Context) {
 		return
 	}
 
-	diff, suc := utils.ConvertQueryInt(c, "diff", strconv.Itoa(int(chartFormat.Diff_Expert)))
+	diff, suc := utils.ConvertQueryInt(c, "diff", strconv.Itoa(int(ChartFormat.Diff_Expert)))
 	if !suc {
 		return
 	}

@@ -2,7 +2,7 @@ package Controllers
 
 import (
 	"ayachanV2/Models"
-	"ayachanV2/Models/chartFormat"
+	"ayachanV2/Models/ChartFormat"
 	"ayachanV2/Services"
 	"ayachanV2/utils"
 	"fmt"
@@ -33,7 +33,7 @@ func MapInfoFromBestdori(c *gin.Context) {
 	if !suc {
 		return
 	}
-	diff, suc := utils.ConvertQueryInt(c, "diff", strconv.Itoa(int(chartFormat.Diff_Expert)))
+	diff, suc := utils.ConvertQueryInt(c, "diff", strconv.Itoa(int(ChartFormat.Diff_Expert)))
 	if !suc {
 		return
 	}
@@ -48,7 +48,7 @@ func MapInfoFromBestdori(c *gin.Context) {
 		return
 	}
 	Map := BestdoriV2Map.Decode()
-	MapInfo := Services.MapInfoGetter(Map, chartFormat.DiffType(diff))
+	MapInfo := Services.MapInfoGetter(Map, ChartFormat.DiffType(diff))
 
 	c.JSON(http.StatusOK, MapInfoOutput{
 		MapInfo: MapInfo,
@@ -77,7 +77,7 @@ func MapInfo(c *gin.Context) {
 		utils.ErrorHandle(c, http.StatusBadRequest, fmt.Errorf("无法解析body参数：diff"))
 		return
 	}
-	MapInfo := Services.MapInfoGetter(Map, chartFormat.DiffType(diff))
+	MapInfo := Services.MapInfoGetter(Map, ChartFormat.DiffType(diff))
 
 	c.JSON(http.StatusOK, MapInfoOutput{
 		MapInfo: MapInfo,

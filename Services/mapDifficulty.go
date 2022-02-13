@@ -2,7 +2,7 @@ package Services
 
 import (
 	"ayachanV2/Models"
-	"ayachanV2/Models/chartFormat"
+	"ayachanV2/Models/ChartFormat"
 )
 
 // diffLevels 对应每个等级的记录最低Level，下一个为记录最高Level
@@ -70,7 +70,7 @@ var maxValue = [][3]float64{
 }
 
 // 要一定能拿到等级的
-func getLevelCalc(diffType int, diff chartFormat.DiffType, value float64) (level float64) {
+func getLevelCalc(diffType int, diff ChartFormat.DiffType, value float64) (level float64) {
 	if diffType == diffTypeFlickNoteInterval || diffType == diffTypeNoteFlickInterval {
 		if diff <= 1 {
 			return level
@@ -93,16 +93,16 @@ func getLevelCalc(diffType int, diff chartFormat.DiffType, value float64) (level
 	return MaxLevel + (value-MaxLevelPos)/levelPace
 }
 
-func getTrueDiff(diff chartFormat.DiffType, totalNPS float64, totalHPS float64) (trueDiff chartFormat.DiffType) {
+func getTrueDiff(diff ChartFormat.DiffType, totalNPS float64, totalHPS float64) (trueDiff ChartFormat.DiffType) {
 	if diff <= 2 && (totalNPS > maxValue[diffTypeTotalNPS][diff] || totalHPS > maxValue[diffTypeTotalHPS][diff]) {
 		return getTrueDiff(diff+1, totalNPS, totalHPS)
 	} else if diff == 4 {
-		return chartFormat.Diff_Expert
+		return ChartFormat.Diff_Expert
 	}
 	return diff
 }
 
-func getLevelCompare(diffType int, diff chartFormat.DiffType, value float64, totalLevel float64) (status Models.DifficultyDescription) {
+func getLevelCompare(diffType int, diff ChartFormat.DiffType, value float64, totalLevel float64) (status Models.DifficultyDescription) {
 	if diffType == diffTypeFlickNoteInterval || diffType == diffTypeNoteFlickInterval {
 		if diff <= 1 && value > 0 {
 			return Models.DifficultyHigh
@@ -121,7 +121,7 @@ func getLevelCompare(diffType int, diff chartFormat.DiffType, value float64, tot
 }
 
 // StandardDifficultyGetter 获得标准 谱面难度 信息,除了Irregular项
-func StandardDifficultyGetter(Info Models.MapInfoStandard, diff chartFormat.DiffType) (StandardDifficulty Models.MapDifficultyStandard, newDiff chartFormat.DiffType) {
+func StandardDifficultyGetter(Info Models.MapInfoStandard, diff ChartFormat.DiffType) (StandardDifficulty Models.MapDifficultyStandard, newDiff ChartFormat.DiffType) {
 	newDiff = getTrueDiff(diff, Info.TotalNPS, Info.TotalHPS)
 	StandardDifficulty = Models.MapDifficultyStandard{
 		TotalNPS:     getLevelCalc(diffTypeTotalNPS, newDiff, Info.TotalNPS),
@@ -133,7 +133,7 @@ func StandardDifficultyGetter(Info Models.MapInfoStandard, diff chartFormat.Diff
 }
 
 // ExtendDifficultyGetter 获得标准 谱面难度 信息,除了Irregular项
-func ExtendDifficultyGetter(Info Models.MapInfoExtend, diff chartFormat.DiffType, level float64) (ExtendDifficulty Models.MapDifficultyExtend) {
+func ExtendDifficultyGetter(Info Models.MapInfoExtend, diff ChartFormat.DiffType, level float64) (ExtendDifficulty Models.MapDifficultyExtend) {
 	return Models.MapDifficultyExtend{
 		MaxSpeed:          getLevelCompare(diffTypeMaxSpeed, diff, Info.MaxSpeed, level),
 		FingerMaxHPS:      getLevelCompare(diffTypeFingerMaxHPS, diff, Info.FingerMaxHPS, level),

@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/url"
+	"os"
 	"time"
 )
 
@@ -16,6 +17,7 @@ var LastUpdate time.Time
 
 type YamlConfig struct {
 	RunAddr  string             `yaml:"run-addr"`
+	Debug    bool               `yaml:"debug"`
 	API      YamlConfigAPI      `yaml:"api"`
 	Database YamlConfigDatabase `yaml:"database"`
 }
@@ -45,7 +47,7 @@ func NewYamlConfig() *YamlConfig {
 }
 
 func init() {
-	Version = "2.0.1"
+	Version = "2.0.2"
 	Config = NewYamlConfig()
 	yamlFile, err := ioutil.ReadFile("conf.yaml")
 	if err != nil {
@@ -54,7 +56,8 @@ func init() {
 		if err != nil {
 			log.Fatal(err.Error())
 		}
-		log.Fatal("conf.yaml not found, one is generate!")
+		log.Printf("conf.yaml not found, one is generate!")
+		os.Exit(0)
 	}
 	err = yaml.Unmarshal(yamlFile, Config)
 	if err != nil {

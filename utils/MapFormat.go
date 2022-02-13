@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"ayachanV2/Models/mapFormat"
+	"ayachanV2/Models/MapFormat"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -15,7 +15,7 @@ type MapInput struct {
 }
 
 type BestdoriV2Input struct {
-	Map mapFormat.BestdoriV2Chart `json:"map"`
+	Map MapFormat.BestdoriV2Chart `json:"map"`
 }
 
 type MapOutput struct {
@@ -24,7 +24,7 @@ type MapOutput struct {
 }
 
 // ReadMap 读取内容字段内容 转换为map 会处理错误
-func ReadMap(c *gin.Context) (Map mapFormat.Chart, Options map[string]string, suc bool) {
+func ReadMap(c *gin.Context) (Map MapFormat.Chart, Options map[string]string, suc bool) {
 	var inputOptions MapInput
 	err := c.ShouldBindBodyWith(&inputOptions, binding.JSON)
 	if err != nil {
@@ -55,7 +55,7 @@ func ReadMap(c *gin.Context) (Map mapFormat.Chart, Options map[string]string, su
 }
 
 // ReturnMap 返回指定格式的谱面 会处理错误
-func ReturnMap(c *gin.Context, Map mapFormat.Chart, formatOut string) (suc bool) {
+func ReturnMap(c *gin.Context, Map MapFormat.Chart, formatOut string) (suc bool) {
 	if formatOut == "BestdoriV2" {
 		BestdoriV2map, err := Map.EncodeBestdoriV2()
 		if err != nil {

@@ -1,4 +1,4 @@
-package mapFormat
+package MapFormat
 
 import (
 	"fmt"

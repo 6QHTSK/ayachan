@@ -3,13 +3,13 @@ package main
 import (
 	"ayachanV2/Config"
 	"ayachanV2/Databases"
+	"ayachanV2/Log"
 	"ayachanV2/Router"
 	"ayachanV2/Services"
 	"flag"
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/manifoldco/promptui"
-	"log"
 )
 
 // @title ayachan API
@@ -41,7 +41,7 @@ func yesNo() bool {
 	}
 	_, result, err := prompt.Run()
 	if err != nil {
-		log.Fatalf("Prompt failed %v\n", err)
+		Log.Log.Fatalf("Prompt failed %v\n", err)
 	}
 	return result == "是"
 }
@@ -50,7 +50,7 @@ func main() {
 	defer func(SqlDB *sqlx.DB) {
 		err := SqlDB.Close()
 		if err != nil {
-			log.Fatal(err)
+			Log.Log.Fatal(err)
 		}
 	}(Databases.SqlDB)
 
@@ -59,11 +59,11 @@ func main() {
 		if yesNo() {
 			_, err := Services.BestdoriFanMadeSyncAll()
 			if err != nil {
-				log.Fatal(err)
+				Log.Log.Fatal(err)
 			}
 			err = Services.MysqlSyncToMeiliSearch()
 			if err != nil {
-				log.Fatal(err)
+				Log.Log.Fatal(err)
 			}
 		}
 	} else if showVer {
@@ -71,14 +71,13 @@ func main() {
 	} else {
 		lastUpdate, err := Databases.GetLastUpdate()
 		if err != nil {
-			log.Println("读表失败，表为空，最后更新设为0")
+			Log.Log.Warning("读表失败，表为空，最后更新设为0")
 		}
 		Config.SetLastUpdate(lastUpdate)
 		Services.CronSync()
 
 		router := Router.InitRouter()
 
-		//Router.InitSwaggerDoc(router)
 		Router.InitAPIV2(router)
 		_ = router.Run(runAddr)
 	}

@@ -2,7 +2,7 @@ package DatabaseModel
 
 import (
 	"ayachanV2/Models"
-	"ayachanV2/Models/chartFormat"
+	"ayachanV2/Models/ChartFormat"
 	"time"
 )
 
@@ -59,16 +59,16 @@ type BestdoriFanMadeMetrics struct {
 	Version   int  `db:"version"`
 }
 
-func (d BestdoriFanMadeView) ToBestdoriChart() chartFormat.BestdoriChartItem {
-	return chartFormat.BestdoriChartItem{
+func (d BestdoriFanMadeView) ToBestdoriChart() ChartFormat.BestdoriChartItem {
+	return ChartFormat.BestdoriChartItem{
 		ChartID: d.ChartID,
 		Title:   d.Title,
 		Artists: d.Artists,
-		Author: chartFormat.Author{
+		Author: ChartFormat.Author{
 			Username: d.Username,
 			Nickname: d.Nickname,
 		},
-		Diff:  chartFormat.DiffType(d.Diff),
+		Diff:  ChartFormat.DiffType(d.Diff),
 		Level: d.ChartLevel,
 		SongUrl: struct {
 			Cover string `json:"cover"`

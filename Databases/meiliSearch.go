@@ -1,13 +1,12 @@
 package Databases
 
 import (
+	"ayachanV2/Models/ChartFormat"
 	"ayachanV2/Models/DatabaseModel"
-	"ayachanV2/Models/chartFormat"
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/meilisearch/meilisearch-go"
-	"io/ioutil"
-	"log"
 	"strconv"
 	"time"
 )
@@ -35,7 +34,12 @@ func AddDocument(docs interface{}) (err error) {
 	if err != nil {
 		return err
 	}
-	task, err := client.WaitForTask(updateTask)
+	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancelFunc()
+	task, err := client.WaitForTask(updateTask, struct {
+		Context  context.Context
+		Interval time.Duration
+	}{Context: ctx, Interval: time.Second})
 	if err != nil {
 		return err
 	}
@@ -50,18 +54,7 @@ func AddDocument(docs interface{}) (err error) {
 	return nil
 }
 
-func HandleErr(document DatabaseModel.BestdoriFanMadeView, err error) {
-	// 不再处理failList
-	currentTimeStamp := time.Now().Unix()
-	logName := fmt.Sprintf("log/%d.%d.log", document.ChartID, currentTimeStamp)
-	fErr := ioutil.WriteFile(logName, []byte(fmt.Sprintf("%d,%s", document.ChartID, err)), 0666)
-	if fErr != nil {
-		log.Printf("Fail To Write File %s\n", logName)
-		log.Printf("Sync Fail , chartID = %d\n", document.ChartID)
-	}
-}
-
-func Query(q string, page int64, limit int64, filter []string) (charts []chartFormat.BestdoriChartItem, totalChart int64, err error) {
+func Query(q string, page int64, limit int64, filter []string) (charts []ChartFormat.BestdoriChartItem, totalChart int64, err error) {
 	res, err := index.Search(q, &meilisearch.SearchRequest{
 		Offset: page * limit,
 		Limit:  limit,
@@ -87,7 +80,7 @@ func Query(q string, page int64, limit int64, filter []string) (charts []chartFo
 	return charts, totalChart, err
 }
 
-func Get(chartID int) (chart chartFormat.BestdoriChartItem, err error) {
+func Get(chartID int) (chart ChartFormat.BestdoriChartItem, err error) {
 	var dbChart DatabaseModel.BestdoriFanMadeView
 	err = index.GetDocument(strconv.Itoa(chartID), &dbChart)
 	return dbChart.ToBestdoriChart(), err

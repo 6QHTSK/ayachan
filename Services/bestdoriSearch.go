@@ -2,7 +2,7 @@ package Services
 
 import (
 	"ayachanV2/Databases"
-	"ayachanV2/Models/chartFormat"
+	"ayachanV2/Models/ChartFormat"
 	"fmt"
 	"math"
 )
@@ -130,12 +130,12 @@ func (s *BestdoriSearch) Filter() (filter []string) {
 	return filter
 }
 
-func (s *BestdoriSearch) Search() (documents []chartFormat.BestdoriChartItem, totalPage int64, err error) {
+func (s *BestdoriSearch) Search() (documents []ChartFormat.BestdoriChartItem, totalPage int64, err error) {
 	documents, totalPage, err = Databases.Query(s.queryString, s.page, s.limit, s.Filter())
 	totalPage = int64(math.Ceil(float64(totalPage) / float64(s.limit)))
 	return documents, totalPage, err
 }
 
-func BestdoriFanMadeGet(chartID int) (chart chartFormat.BestdoriChartItem, err error) {
+func BestdoriFanMadeGet(chartID int) (chart ChartFormat.BestdoriChartItem, err error) {
 	return Databases.Get(chartID)
 }

@@ -2,7 +2,7 @@ package Services
 
 import (
 	"ayachanV2/Config"
-	"ayachanV2/Models/mapFormat"
+	"ayachanV2/Models/MapFormat"
 	"ayachanV2/utils"
 	"fmt"
 	"net/http"
@@ -11,11 +11,11 @@ import (
 
 type mapDataRequest struct {
 	Result bool                      `json:"result"`
-	Map    mapFormat.BestdoriV2Chart `json:"map"`
+	Map    MapFormat.BestdoriV2Chart `json:"map"`
 }
 
 // GetMapData 从Bestdori拉取指定ChartID的谱面
-func GetMapData(chartID int, diff int) (Map mapFormat.BestdoriV2Chart, errorCode int, err error) {
+func GetMapData(chartID int, diff int) (Map MapFormat.BestdoriV2Chart, errorCode int, err error) {
 	mapDataParam, err := url.Parse(fmt.Sprintf("%d/map?diff=%d", chartID, diff))
 	mapDataUrl := Config.BestdoriAPIUrl.ResolveReference(mapDataParam)
 	var request mapDataRequest

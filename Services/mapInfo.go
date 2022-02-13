@@ -2,15 +2,15 @@ package Services
 
 import (
 	"ayachanV2/Models"
-	"ayachanV2/Models/chartFormat"
-	"ayachanV2/Models/mapFormat"
+	"ayachanV2/Models/ChartFormat"
+	"ayachanV2/Models/MapFormat"
 	"ayachanV2/utils"
 	"container/heap"
 	"math"
 )
 
 // basicInfoGetter 获得最基础的谱面信息(除了Irregular项)、Hit总数、HPS
-func basicInfoGetter(Map mapFormat.Chart) (info Models.MapInfoBasic, TotalHitCount int, TotalHPS float64, BPMInfo Models.BpmInfo, err error) {
+func basicInfoGetter(Map MapFormat.Chart) (info Models.MapInfoBasic, TotalHitCount int, TotalHPS float64, BPMInfo Models.BpmInfo, err error) {
 	var BPMList map[float64]float64
 	var firstNoteTime float64
 	BPMList = make(map[float64]float64)
@@ -22,7 +22,7 @@ func basicInfoGetter(Map mapFormat.Chart) (info Models.MapInfoBasic, TotalHitCou
 	MainBPMTime := -1.0
 	for _, note := range Map {
 		switch note.Type {
-		case mapFormat.NoteTypeSingle:
+		case MapFormat.NoteTypeSingle:
 			if noteFlag {
 				firstNoteTime = note.Time
 				noteFlag = false
@@ -32,20 +32,20 @@ func basicInfoGetter(Map mapFormat.Chart) (info Models.MapInfoBasic, TotalHitCou
 			if note.Flick && note.Direction != 0 {
 				info.SPRhythm = true
 			}
-		case mapFormat.NoteTypeSlide:
+		case MapFormat.NoteTypeSlide:
 			if noteFlag {
 				firstNoteTime = note.Time
 				noteFlag = false
 			}
 			if !note.Hidden {
 				info.TotalNote++
-				if note.Status == mapFormat.SlideStart {
+				if note.Status == MapFormat.SlideStart {
 					TotalHitCount++
 				}
 			} else {
 				info.SPRhythm = true
 			}
-		case mapFormat.NoteTypeBpm:
+		case MapFormat.NoteTypeBpm:
 			if !noteFlag {
 				BPMInfo.BPMLow = math.Min(BPMInfo.BPMLow, currentBPM)
 				BPMInfo.BPMHigh = math.Max(BPMInfo.BPMHigh, currentBPM)
@@ -74,10 +74,10 @@ func basicInfoGetter(Map mapFormat.Chart) (info Models.MapInfoBasic, TotalHitCou
 }
 
 // counter 谱面计数器，谱面Note计数
-func counter(Map mapFormat.Chart) (NoteCount Models.NoteCount) {
+func counter(Map MapFormat.Chart) (NoteCount Models.NoteCount) {
 	for _, note := range Map {
 		switch note.Type {
-		case mapFormat.NoteTypeSingle:
+		case MapFormat.NoteTypeSingle:
 			if note.Flick {
 				if note.Direction > 0 {
 					NoteCount.Direction.Total++
@@ -91,17 +91,17 @@ func counter(Map mapFormat.Chart) (NoteCount Models.NoteCount) {
 			} else {
 				NoteCount.Single++
 			}
-		case mapFormat.NoteTypeSlide:
+		case MapFormat.NoteTypeSlide:
 			switch note.Status {
-			case mapFormat.SlideStart:
+			case MapFormat.SlideStart:
 				NoteCount.SlideStart++
-			case mapFormat.SlideTick:
+			case MapFormat.SlideTick:
 				if note.Hidden {
 					NoteCount.SlideHidden++
 				} else {
 					NoteCount.SlideTick++
 				}
-			case mapFormat.SlideEnd:
+			case MapFormat.SlideEnd:
 				if note.Flick {
 					NoteCount.SlideFlick++
 				} else {
@@ -114,18 +114,18 @@ func counter(Map mapFormat.Chart) (NoteCount Models.NoteCount) {
 }
 
 //distribution 谱面分布计数器，MaxScreenNPS
-func distribution(Map mapFormat.Chart, totalTime float64) (MaxScreenNPS float64, Distribution Models.Distribution) {
+func distribution(Map MapFormat.Chart, totalTime float64) (MaxScreenNPS float64, Distribution Models.Distribution) {
 	Distribution.Note = make([]int, int(math.Ceil(totalTime+0.01)))
 	Distribution.Hit = make([]int, int(math.Ceil(totalTime+0.01)))
 	var MaxScreenNPSHeap Models.Float64Heap
 	heap.Init(&MaxScreenNPSHeap)
 	for _, note := range Map {
 		switch note.Type {
-		case mapFormat.NoteTypeSingle:
+		case MapFormat.NoteTypeSingle:
 			Distribution.Note[int(math.Floor(note.Time))]++
 			Distribution.Hit[int(math.Floor(note.Time))]++
-		case mapFormat.NoteTypeSlide:
-			if note.Status == mapFormat.SlideStart {
+		case MapFormat.NoteTypeSlide:
+			if note.Status == MapFormat.SlideStart {
 				Distribution.Note[int(math.Floor(note.Time))]++
 				Distribution.Hit[int(math.Floor(note.Time))]++
 			} else {
@@ -143,7 +143,7 @@ func distribution(Map mapFormat.Chart, totalTime float64) (MaxScreenNPS float64,
 }
 
 // StandardInfoGetter 获得标准谱面信息,除了Irregular项
-func StandardInfoGetter(Map mapFormat.Chart) (StandardInfo Models.MapInfoStandard) {
+func StandardInfoGetter(Map MapFormat.Chart) (StandardInfo Models.MapInfoStandard) {
 	StandardInfo.MapInfoBasic, StandardInfo.TotalHitNote, StandardInfo.TotalHPS, StandardInfo.BpmInfo, _ = basicInfoGetter(Map)
 	StandardInfo.NoteCount = counter(Map)
 	StandardInfo.MaxScreenNPS, StandardInfo.Distribution = distribution(Map, Map[len(Map)-1].Time)
@@ -151,7 +151,7 @@ func StandardInfoGetter(Map mapFormat.Chart) (StandardInfo Models.MapInfoStandar
 }
 
 // ExtendInfoGetter 获得扩展谱面信息
-func ExtendInfoGetter(ParsedMap mapFormat.ParsedChart) (ExtendInfo Models.MapInfoExtend) {
+func ExtendInfoGetter(ParsedMap MapFormat.ParsedChart) (ExtendInfo Models.MapInfoExtend) {
 	var leftCount, RightCount int
 	var MaxSpeed, FingerMaxHPSLeft, FingerMaxHPSRight, FlickNoteInterval, NoteFlickInterval Models.Float64Heap
 	heap.Init(&MaxSpeed)
@@ -160,13 +160,13 @@ func ExtendInfoGetter(ParsedMap mapFormat.ParsedChart) (ExtendInfo Models.MapInf
 	heap.Init(&FlickNoteInterval)
 	heap.Init(&NoteFlickInterval)
 	for i, note := range ParsedMap {
-		if note.Hand == mapFormat.LeftHand {
-			if leftCount != 0 && !(note.Type == mapFormat.NoteTypeSlide && note.Status != mapFormat.SlideStart) {
+		if note.Hand == MapFormat.LeftHand {
+			if leftCount != 0 && !(note.Type == MapFormat.NoteTypeSlide && note.Status != MapFormat.SlideStart) {
 				heap.Push(&FingerMaxHPSLeft, utils.Reciprocal(note.GetIntervalFront()))
 			}
 			leftCount++
 		} else {
-			if RightCount != 0 && !(note.Type == mapFormat.NoteTypeSlide && note.Status != mapFormat.SlideStart) {
+			if RightCount != 0 && !(note.Type == MapFormat.NoteTypeSlide && note.Status != MapFormat.SlideStart) {
 				heap.Push(&FingerMaxHPSRight, utils.Reciprocal(note.GetIntervalFront()))
 			}
 			RightCount++
@@ -174,7 +174,7 @@ func ExtendInfoGetter(ParsedMap mapFormat.ParsedChart) (ExtendInfo Models.MapInf
 		if i != 0 {
 			heap.Push(&MaxSpeed, math.Abs(note.GetGapFront())/note.GetIntervalFront())
 		}
-		if note.Type == mapFormat.NoteTypeSingle && note.Flick {
+		if note.Type == MapFormat.NoteTypeSingle && note.Flick {
 			heap.Push(&FlickNoteInterval, utils.Reciprocal(note.GetIntervalBack()))
 			heap.Push(&NoteFlickInterval, utils.Reciprocal(note.GetIntervalFront()))
 		}
@@ -189,12 +189,12 @@ func ExtendInfoGetter(ParsedMap mapFormat.ParsedChart) (ExtendInfo Models.MapInf
 }
 
 // MapInfoGetter 获得全部的谱面信息
-func MapInfoGetter(Map mapFormat.Chart, diff chartFormat.DiffType) (MapInfo Models.MapInfo) {
-	//var ParsedChart mapFormat.ParsedChart
+func MapInfoGetter(Map MapFormat.Chart, diff ChartFormat.DiffType) (MapInfo Models.MapInfo) {
+	//var ParsedChart MapFormat.ParsedChart
 	MapInfoStandard := StandardInfoGetter(Map)
 	MapDifficultyStandard, diff := StandardDifficultyGetter(MapInfoStandard, diff)
 
-	var ParsedMap mapFormat.ParsedChart
+	var ParsedMap MapFormat.ParsedChart
 	ParsedMap, MapInfoStandard.MapInfoBasic.IrregularInfo = ParseMap(Map)
 	//_, MapInfoStandard.MapInfoBasic.IrregularInfo = ParseMap(Map)
 

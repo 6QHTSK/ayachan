@@ -1,4 +1,4 @@
-package chartFormat
+package ChartFormat
 
 import (
 	"ayachanV2/Models"

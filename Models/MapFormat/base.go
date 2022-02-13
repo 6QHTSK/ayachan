@@ -1,4 +1,4 @@
-package mapFormat
+package MapFormat
 
 type NoteType int
 

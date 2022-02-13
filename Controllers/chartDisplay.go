@@ -2,19 +2,19 @@ package Controllers
 
 import (
 	"ayachanV2/Databases"
-	"ayachanV2/Models/chartFormat"
+	"ayachanV2/Models/ChartFormat"
 	"ayachanV2/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 type ChartDisplayOutput struct {
-	ChartSet []chartFormat.Chart `json:"chart_set"`
+	ChartSet []ChartFormat.Chart `json:"chart_set"`
 	Result   bool                `json:"result"`
 }
 
 type ChartDisplayOutputID struct {
-	Chart  chartFormat.Chart `json:"chart_set"`
+	Chart  ChartFormat.Chart `json:"chart_set"`
 	Result bool              `json:"result"`
 }
 
