@@ -3,78 +3,62 @@ package Databases
 import (
 	"ayachanV2/Models/DatabaseModel"
 	"ayachanV2/Models/chartFormat"
-	"container/list"
-	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/meilisearch/meilisearch-go"
+	"io/ioutil"
+	"log"
 	"strconv"
+	"time"
 )
 
-type failItem struct {
-	document interface{}
-	err      error
-}
-
-var FailList = list.New()
-
-var index = meilisearch.NewClient(meilisearch.ClientConfig{Host: meiliSearchURL, APIKey: meiliSearchKey}).Index("BestdoriFanMade")
-
-func handleErr(document interface{}, err error) {
-	FailList.PushBack(failItem{document, err})
-}
-
-func handleFailList() {
-	count := FailList.Len()
-	for i := 0; i < count; i++ {
-		elem := FailList.Front()
-		item := elem.Value.(failItem)
-		FailList.Remove(elem)
-		insertDocuments(item.document)
-	}
-}
-
-func insertDocuments(documents interface{}) {
-	updateTask, err := index.UpdateDocuments(documents)
+func GetMeiliLastUpdate() (lastUpdate time.Time, err error) {
+	res, err := index.Search("", &meilisearch.SearchRequest{
+		Limit: 1,
+		Sort:  []string{"last_update:desc"},
+	})
 	if err != nil {
-		handleErr(documents, err)
-		return
+		return lastUpdate, err
 	}
-	status, err := index.WaitForPendingUpdate(context.TODO(), 1, updateTask)
-	if err != nil {
-		handleErr(documents, err)
-		return
-	}
-	if status == meilisearch.UpdateStatusFailed {
-		updateResp, err := index.GetUpdateStatus(updateTask.UpdateID)
+	if res.NbHits > 0 {
+		item := res.Hits[0].(map[string]interface{})
+		lastUpdate, err = time.ParseInLocation(time.RFC3339, item["last_update"].(string), MysqlLocation)
 		if err != nil {
-			handleErr(documents, err)
-			return
+			return lastUpdate, err
 		}
-		err = fmt.Errorf("meilisearch Error: %s", updateResp.Error)
-		handleErr(documents, err)
-		return
 	}
+	return lastUpdate, nil
 }
 
-func UpdateNickname(username string) error {
-	documents, err := queryBestdoriSongByAuthor(username)
+func AddDocument(docs interface{}) (err error) {
+	updateTask, err := index.AddDocuments(docs)
 	if err != nil {
 		return err
 	}
-	handleFailList()
-	insertDocuments(documents)
+	task, err := client.WaitForTask(updateTask)
+	if err != nil {
+		return err
+	}
+	if task.Status == meilisearch.TaskStatusSucceeded {
+		return nil
+	} else if task.Status == meilisearch.TaskStatusFailed {
+		errorStr, _ := json.Marshal(task.Error)
+		return fmt.Errorf("%s", errorStr)
+	} else if task.Status == meilisearch.TaskStatusUnknown {
+		return fmt.Errorf("meiliSearch update status unknown")
+	}
 	return nil
 }
 
-func InsertChart(document DatabaseModel.BestdoriFanMadeView) {
-	handleFailList()
-	insertDocuments(document)
-}
-
-func UpdateChart(document chartFormat.BestdoriChartUpdateItem) {
-	handleFailList()
-	insertDocuments(document)
+func HandleErr(document DatabaseModel.BestdoriFanMadeView, err error) {
+	// 不再处理failList
+	currentTimeStamp := time.Now().Unix()
+	logName := fmt.Sprintf("log/%d.%d.log", document.ChartID, currentTimeStamp)
+	fErr := ioutil.WriteFile(logName, []byte(fmt.Sprintf("%d,%s", document.ChartID, err)), 0666)
+	if fErr != nil {
+		log.Printf("Fail To Write File %s\n", logName)
+		log.Printf("Sync Fail , chartID = %d\n", document.ChartID)
+	}
 }
 
 func Query(q string, page int64, limit int64, filter []string) (charts []chartFormat.BestdoriChartItem, totalChart int64, err error) {

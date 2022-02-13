@@ -11,7 +11,7 @@ type BestdoriFanMadeView struct {
 	ChartID    int       `db:"chartID" json:"chart_id"`
 	Title      string    `db:"title" json:"title"`
 	Artists    string    `db:"artists" json:"artists"`
-	Username   string    `db:"username" json:"username"`
+	Username   string    `db:"author" json:"username"`
 	Nickname   string    `db:"nickname" json:"nickname"`
 	Diff       int       `db:"diff" json:"diff"`
 	ChartLevel int       `db:"chartLevel" json:"chart_level"`
@@ -25,7 +25,8 @@ type BestdoriFanMadeView struct {
 	TotalNPS   float64   `db:"totalNPS" json:"total_nps"`
 	SPRhythm   bool      `db:"SPRhythm" json:"sp_rhythm"`
 	Irregular  int       `db:"irregular" json:"irregular"`
-	Content    string    `db:"Content" json:"content"`
+	Content    string    `db:"content" json:"content"`
+	Version    int       `db:"version" json:"-"`
 }
 
 type BestdoriAuthorList struct {

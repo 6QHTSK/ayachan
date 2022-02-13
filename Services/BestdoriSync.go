@@ -7,6 +7,7 @@ import (
 	"ayachanV2/Models/chartFormat"
 	"ayachanV2/utils"
 	"fmt"
+	"github.com/robfig/cron/v3"
 	"log"
 	"math"
 	"math/rand"
@@ -166,4 +167,83 @@ func BestdoriFanMadeInsertID(chartID int) (errorCode int, err error) {
 	}
 
 	return http.StatusOK, nil
+}
+
+// MysqlSyncToMeiliSearch call at 30s each minute
+func MysqlSyncToMeiliSearch() (err error) {
+	lastUpdate, err := Databases.GetMeiliLastUpdate()
+	if err != nil {
+		return err
+	}
+	documents, err := Databases.QueryBestdoriFanMadeByLastUpdate(lastUpdate)
+	if err != nil {
+		return err
+	}
+	if len(documents) > 0 {
+		count := len(documents)
+		for i := 0; i < len(documents); i += 500 {
+			end := i + 500
+			if i+500 > len(documents) {
+				end = len(documents)
+			}
+			err := Databases.AddDocument(documents[i:end])
+			if err != nil {
+				for _, doc := range documents {
+					err := Databases.AddDocument(doc)
+					if err != nil {
+						Databases.HandleErr(doc, err)
+						count--
+					}
+				}
+			}
+		}
+		log.Printf("MeiliSearch Sync Finish! %d documents sync!", count)
+		return nil
+	} else {
+		// Nothing to sync
+		log.Print("MeiliSearch Sync Sleep")
+		return nil
+	}
+}
+
+func CronSync() {
+	c := cron.New(cron.WithSeconds())
+	// 每小时的Bestdori随机更新任务
+	_, err := c.AddFunc("@hourly", func() {
+		log.Print("Start Sync hourly")
+		_, err := BestdoriFanMadeSyncRand()
+		if err != nil {
+			log.Printf("Failed sync: Error %s", err)
+		}
+	})
+	if err != nil {
+		log.Fatalf("Cannot add hourly job:%s", err)
+	}
+	// 每分钟的Bestdori拉取第一页任务 除整点
+	_, err = c.AddFunc("0 1-59 * * * *", func() {
+		log.Print("Start Sync Mysql minutely")
+		_, _, err := BestdoriFanMadeSyncPage(0)
+		if err != nil {
+			log.Printf("Failed sync minute : Error %s", err)
+		} else {
+			log.Print("Sync Mysql Success")
+		}
+	})
+	if err != nil {
+		log.Fatalf("Cannot add minutely Mysql job:%s", err)
+	}
+	// 每分钟的MeiliSearch同步任务
+	_, err = c.AddFunc("30 * * * * *", func() {
+		log.Print("Start Sync MeiliSearch minutely")
+		err := MysqlSyncToMeiliSearch()
+		if err != nil {
+			log.Printf("Failed sync minute : Error %s", err)
+		} else {
+			log.Print("Sync MeiliSearch Success")
+		}
+	})
+	if err != nil {
+		log.Fatalf("Cannot add minutely Meilisearch job:%s", err)
+	}
+	c.Start()
 }
