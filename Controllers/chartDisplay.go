@@ -1,9 +1,9 @@
 package Controllers
 
 import (
-	"ayachanV2/Databases"
-	"ayachanV2/Models/ChartFormat"
-	"ayachanV2/utils"
+	"ayachan/Databases"
+	"ayachan/Models/ChartFormat"
+	"ayachan/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

@@ -1,8 +1,8 @@
 package Databases
 
 import (
-	"ayachanV2/Models/ChartFormat"
-	"ayachanV2/Models/DatabaseModel"
+	"ayachan/Models/ChartFormat"
+	"ayachan/Models/DatabaseModel"
 	"context"
 	"encoding/json"
 	"fmt"

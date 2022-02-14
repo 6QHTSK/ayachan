@@ -1,8 +1,8 @@
 package DatabaseModel
 
 import (
-	"ayachanV2/Models"
-	"ayachanV2/Models/ChartFormat"
+	"ayachan/Models"
+	"ayachan/Models/ChartFormat"
 	"time"
 )
 

@@ -122,7 +122,7 @@ fabric.properties
 .nfs*
 
 /songList.json
-/go_build_ayachanV2
+/go_build_ayachan
 !/Databases/databaseinfo.go
 /Databases/databaseinfo.go
 release

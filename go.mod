@@ -1,4 +1,4 @@
-module ayachanV2
+module ayachan
 
 go 1.16
 

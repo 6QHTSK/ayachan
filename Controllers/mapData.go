@@ -1,9 +1,9 @@
 package Controllers
 
 import (
-	"ayachanV2/Models/ChartFormat"
-	"ayachanV2/Services"
-	"ayachanV2/utils"
+	"ayachan/Models/ChartFormat"
+	"ayachan/Services"
+	"ayachan/utils"
 	"github.com/gin-gonic/gin"
 	"strconv"
 )

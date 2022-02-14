@@ -1,8 +1,8 @@
 package Controllers
 
 import (
-	"ayachanV2/Services"
-	"ayachanV2/utils"
+	"ayachan/Services"
+	"ayachan/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

@@ -1,11 +1,11 @@
 package main
 
 import (
-	"ayachanV2/Config"
-	"ayachanV2/Databases"
-	"ayachanV2/Log"
-	"ayachanV2/Router"
-	"ayachanV2/Services"
+	"ayachan/Config"
+	"ayachan/Databases"
+	"ayachan/Log"
+	"ayachan/Router"
+	"ayachan/Services"
 	"flag"
 	"fmt"
 	"github.com/jmoiron/sqlx"
@@ -36,7 +36,7 @@ func init() {
 
 func yesNo() bool {
 	prompt := promptui.Select{
-		Label: "开始更新全部内容(耗时3小时），是否继续?",
+		Label: "开始更新全部内容(耗时约3小时），是否继续?",
 		Items: []string{"是", "否"},
 	}
 	_, result, err := prompt.Run()
@@ -74,7 +74,11 @@ func main() {
 			Log.Log.Warning("读表失败，表为空，最后更新设为0")
 		}
 		Config.SetLastUpdate(lastUpdate)
-		Services.CronSync()
+		if Config.Config.StartCron {
+			Services.CronSync()
+		} else {
+			Log.Log.Warning("同步任务被config文件禁用")
+		}
 
 		router := Router.InitRouter()
 

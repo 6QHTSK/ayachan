@@ -1,7 +1,7 @@
 package Controllers
 
 import (
-	"ayachanV2/Models"
+	"ayachan/Models"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

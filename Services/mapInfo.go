@@ -1,10 +1,10 @@
 package Services
 
 import (
-	"ayachanV2/Models"
-	"ayachanV2/Models/ChartFormat"
-	"ayachanV2/Models/MapFormat"
-	"ayachanV2/utils"
+	"ayachan/Models"
+	"ayachan/Models/ChartFormat"
+	"ayachan/Models/MapFormat"
+	"ayachan/utils"
 	"container/heap"
 	"math"
 )

@@ -1,7 +1,7 @@
 package ChartFormat
 
 import (
-	"ayachanV2/Models"
+	"ayachan/Models"
 )
 
 type AuthorID int

@@ -1,9 +1,9 @@
 package Services
 
 import (
-	"ayachanV2/Config"
-	"ayachanV2/Models/MapFormat"
-	"ayachanV2/utils"
+	"ayachan/Config"
+	"ayachan/Models/MapFormat"
+	"ayachan/utils"
 	"fmt"
 	"net/http"
 	"net/url"

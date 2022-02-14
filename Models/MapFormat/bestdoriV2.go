@@ -16,7 +16,7 @@ type BestdoriV2Note struct {
 }
 
 type BestdoriV2BasicNote struct {
-	Beat_  interface{} `json:"beat,omitempty"`
+	Beat_  interface{} `json:"beat,omitempty"` //Omitempty need to be interface,Beat_ may be 0.0
 	Lane_  interface{} `json:"lane,omitempty"`
 	Flick  bool        `json:"flick,omitempty"`
 	Hidden bool        `json:"hidden,omitempty"`
@@ -80,7 +80,6 @@ func fixLane(lane float64, noteHidden bool) (fix float64) {
 }
 
 func (formatChart BestdoriV2Chart) MapCheck() (result bool, err error) {
-	BPMStartCorrect := false // BPM需出现在第0拍上
 	for _, formatNote := range formatChart {
 		switch formatNote.Type {
 		case "Directional":
@@ -118,23 +117,17 @@ func (formatChart BestdoriV2Chart) MapCheck() (result bool, err error) {
 				}
 			}
 		case "BPM":
-			currentBeat, ok := formatNote.Beat_.(float64)
-			if !ok || currentBeat < 0.0 {
-				return false, fmt.Errorf("无法解析BPM节点的节拍/节拍数小于0")
-			}
-			if formatNote.Beat_.(float64) == 0.0 {
-				BPMStartCorrect = true
+			_, ok := formatNote.Beat_.(float64)
+			if !ok {
+				return false, fmt.Errorf("无法解析BPM节点的节拍")
 			}
 			if len(formatNote.Connections) != 0 {
 				return false, fmt.Errorf("BPM错误的拥有Connections字段")
 			}
-			// BPM的正负会在Decode部分修正
+			// BPM的正负，不在0.0Beat的BPM音符会在Decode部分修正
 		default:
 			// 不知道的音符会在Decode部分扔掉
 		}
-	}
-	if !BPMStartCorrect {
-		return false, fmt.Errorf("BPM不在Beat 0上")
 	}
 	return true, nil
 }
@@ -142,15 +135,30 @@ func (formatChart BestdoriV2Chart) MapCheck() (result bool, err error) {
 func (formatChart BestdoriV2Chart) Decode() (Chart Chart) {
 	SlideCounter := 0
 	sort.Sort(formatChart)
+	FirstBPMBeat := math.Inf(1)
+
+	// 首个BPM节拍校正至0
+	for _, formatNote := range formatChart {
+		if formatNote.Type == "BPM" {
+			FirstBPMBeat = formatNote.Beat()
+			break
+		}
+	}
+
 	// 首先，我们先排序，然后将基本信息填上
 	for _, formatNote := range formatChart {
 		var note Note
+
+		if formatNote.Beat() < FirstBPMBeat {
+			continue //忽略所有在第一个BPM音符出现之前的音符
+		}
+
 		if formatNote.Type == "Single" || formatNote.Type == "Directional" {
 			// 检测到该音符是单点音符
 			// 注入基本信息
 			note = Note{
 				Type:  NoteTypeSingle,
-				Beat:  formatNote.Beat(),
+				Beat:  formatNote.Beat() - FirstBPMBeat,
 				Lane:  fixLane(formatNote.Lane(), false),
 				Flick: formatNote.Flick,
 			}
@@ -169,7 +177,7 @@ func (formatChart BestdoriV2Chart) Decode() (Chart Chart) {
 			note = Note{
 				Type: NoteTypeBpm,
 				BPM:  math.Abs(formatNote.BPM),
-				Beat: formatNote.Beat(),
+				Beat: formatNote.Beat() - FirstBPMBeat,
 			}
 			Chart = append(Chart, note)
 		} else if formatNote.Type == "Slide" || formatNote.Type == "Long" {
@@ -183,7 +191,7 @@ func (formatChart BestdoriV2Chart) Decode() (Chart Chart) {
 				// 长度为1 退化为单点
 				note = Note{
 					Type:  NoteTypeSingle,
-					Beat:  formatNote.Beat(),
+					Beat:  formatNote.Beat() - FirstBPMBeat,
 					Lane:  fixLane(formatNote.Lane(), false),
 					Flick: formatNote.Connections[0].Flick,
 				}
@@ -194,7 +202,7 @@ func (formatChart BestdoriV2Chart) Decode() (Chart Chart) {
 				//注入绿条首
 				note = Note{
 					Type:   NoteTypeSlide,
-					Beat:   formatNote.Beat(),
+					Beat:   formatNote.Beat() - FirstBPMBeat,
 					Lane:   fixLane(formatNote.Lane(), false),
 					Pos:    SlideCounter,
 					Status: SlideStart,
@@ -204,7 +212,7 @@ func (formatChart BestdoriV2Chart) Decode() (Chart Chart) {
 				for i := 1; i < connectionsCount; i++ {
 					note = Note{
 						Type:   NoteTypeSlide,
-						Beat:   formatNote.Connections[i].Beat_.(float64),
+						Beat:   formatNote.Connections[i].Beat_.(float64) - FirstBPMBeat,
 						Lane:   fixLane(formatNote.Connections[i].Lane_.(float64), formatNote.Connections[i].Hidden),
 						Pos:    SlideCounter,
 						Hidden: formatNote.Connections[i].Hidden,

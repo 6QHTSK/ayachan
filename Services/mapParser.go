@@ -1,9 +1,9 @@
 package Services
 
 import (
-	"ayachanV2/Log"
-	"ayachanV2/Models"
-	"ayachanV2/Models/MapFormat"
+	"ayachan/Log"
+	"ayachan/Models"
+	"ayachan/Models/MapFormat"
 	"fmt"
 	"math"
 )

@@ -16,10 +16,11 @@ var BestdoriFanMadeVersion int
 var LastUpdate time.Time
 
 type YamlConfig struct {
-	RunAddr  string             `yaml:"run-addr"`
-	Debug    bool               `yaml:"debug"`
-	API      YamlConfigAPI      `yaml:"api"`
-	Database YamlConfigDatabase `yaml:"database"`
+	RunAddr   string             `yaml:"run-addr"`
+	StartCron bool               `yaml:"start-cron"`
+	Debug     bool               `yaml:"debug"`
+	API       YamlConfigAPI      `yaml:"api"`
+	Database  YamlConfigDatabase `yaml:"database"`
 }
 
 type YamlConfigAPI struct {
@@ -34,7 +35,9 @@ type YamlConfigDatabase struct {
 
 func NewYamlConfig() *YamlConfig {
 	return &YamlConfig{
-		RunAddr: "0.0.0.0:8080",
+		RunAddr:   "0.0.0.0:8080",
+		StartCron: false,
+		Debug:     true,
 		API: YamlConfigAPI{
 			BestdoriAPI: "http://127.0.0.1:21104",
 		},
@@ -47,7 +50,7 @@ func NewYamlConfig() *YamlConfig {
 }
 
 func init() {
-	Version = "2.0.2"
+	Version = "2.0.3"
 	Config = NewYamlConfig()
 	yamlFile, err := ioutil.ReadFile("conf.yaml")
 	if err != nil {

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/ayachanV2.iml" filepath="$PROJECT_DIR$/.idea/ayachanV2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../ayachan/.idea/ayachan.iml" filepath="$PROJECT_DIR$/../ayachan/.idea/ayachan.iml" />
     </modules>
   </component>
 </project>

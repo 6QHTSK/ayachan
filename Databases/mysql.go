@@ -1,9 +1,9 @@
 package Databases
 
 import (
-	"ayachanV2/Config"
-	"ayachanV2/Models/ChartFormat"
-	"ayachanV2/Models/DatabaseModel"
+	"ayachan/Config"
+	"ayachan/Models/ChartFormat"
+	"ayachan/Models/DatabaseModel"
 	"database/sql"
 	"time"
 )

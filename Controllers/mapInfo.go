@@ -1,10 +1,10 @@
 package Controllers
 
 import (
-	"ayachanV2/Models"
-	"ayachanV2/Models/ChartFormat"
-	"ayachanV2/Services"
-	"ayachanV2/utils"
+	"ayachan/Models"
+	"ayachan/Models/ChartFormat"
+	"ayachan/Services"
+	"ayachan/utils"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"

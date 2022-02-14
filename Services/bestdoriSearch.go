@@ -1,8 +1,8 @@
 package Services
 
 import (
-	"ayachanV2/Databases"
-	"ayachanV2/Models/ChartFormat"
+	"ayachan/Databases"
+	"ayachan/Models/ChartFormat"
 	"fmt"
 	"math"
 )

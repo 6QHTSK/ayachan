@@ -1,10 +1,10 @@
 package Controllers
 
 import (
-	"ayachanV2/Config"
-	"ayachanV2/Log"
-	"ayachanV2/Services"
-	"ayachanV2/utils"
+	"ayachan/Config"
+	"ayachan/Log"
+	"ayachan/Services"
+	"ayachan/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"

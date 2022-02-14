@@ -1,14 +1,20 @@
 package Router
 
 import (
-	"ayachanV2/Controllers"
-	"ayachanV2/Log"
-	"ayachanV2/Midware"
+	"ayachan/Config"
+	"ayachan/Controllers"
+	"ayachan/Log"
+	"ayachan/Midware"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func InitRouter() (router *gin.Engine) {
+	if Config.Config.Debug {
+		gin.SetMode(gin.DebugMode)
+	} else {
+		gin.SetMode(gin.ReleaseMode)
+	}
 	router = gin.New()
 	router.Use(Midware.Logger(Log.Log), gin.Recovery())
 	router.Use(cors.Default())

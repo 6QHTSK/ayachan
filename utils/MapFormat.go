@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"ayachanV2/Models/MapFormat"
+	"ayachan/Models/MapFormat"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"

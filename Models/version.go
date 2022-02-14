@@ -1,6 +1,6 @@
 package Models
 
-import "ayachanV2/Config"
+import "ayachan/Config"
 
 type APIVersion struct {
 	Version string `json:"version"`

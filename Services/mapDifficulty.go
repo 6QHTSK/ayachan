@@ -1,8 +1,8 @@
 package Services
 
 import (
-	"ayachanV2/Models"
-	"ayachanV2/Models/ChartFormat"
+	"ayachan/Models"
+	"ayachan/Models/ChartFormat"
 )
 
 // diffLevels 对应每个等级的记录最低Level，下一个为记录最高Level

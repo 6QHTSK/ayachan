@@ -1,7 +1,6 @@
 package Log
 
 import (
-	"ayachanV2/Config"
 	"github.com/mattn/go-colorable"
 	"github.com/sirupsen/logrus"
 	"github.com/snowzach/rotatefilehook"
@@ -11,10 +10,6 @@ import (
 var Log = logrus.New()
 
 func init() {
-	var logLevel = logrus.WarnLevel
-	if Config.Config.Debug {
-		logLevel = logrus.DebugLevel
-	}
 	rotateFileHook, err := rotatefilehook.NewRotateFileHook(rotatefilehook.RotateFileConfig{
 		Filename:   "logs/warnings.log",
 		MaxSize:    50, // megabytes
@@ -43,7 +38,7 @@ func init() {
 		Log.Fatalf("Failed to initialize file rotate hook: %v", err)
 	}
 
-	Log.SetLevel(logLevel)
+	Log.SetLevel(logrus.DebugLevel)
 	Log.SetOutput(colorable.NewColorableStdout())
 	Log.SetFormatter(&logrus.TextFormatter{
 		ForceColors:     true,

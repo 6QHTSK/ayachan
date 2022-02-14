@@ -1,17 +1,18 @@
 package Services
 
 import (
-	"ayachanV2/Config"
-	"ayachanV2/Databases"
-	"ayachanV2/Log"
-	"ayachanV2/Models"
-	"ayachanV2/Models/ChartFormat"
-	"ayachanV2/utils"
+	"ayachan/Config"
+	"ayachan/Databases"
+	"ayachan/Log"
+	"ayachan/Models"
+	"ayachan/Models/ChartFormat"
+	"ayachan/utils"
 	"fmt"
 	"math"
 	"math/rand"
 	"net/http"
 	"net/url"
+	"strings"
 	"sync"
 	"time"
 )
@@ -102,6 +103,9 @@ func BestdoriFanMadeSyncPage(page int) (totalCount int, errCode int, err error) 
 				Level:    item.Level,
 				Likes:    item.Likes,
 			})
+			if err != nil {
+				return totalCount, http.StatusInternalServerError, err
+			}
 		} else {
 			go func(i int, item int, ch chan bool) {
 				defer func() {
@@ -121,6 +125,10 @@ func BestdoriFanMadeSyncPage(page int) (totalCount int, errCode int, err error) 
 						Log.Log.Tracef("Success Update Chart %d [Attemp %d]", item, j)
 						return
 					} else {
+						if strings.Contains("BPM", err.Error()) {
+							Log.Log.Warningf("BPM Fault, stop")
+							return
+						}
 						Log.Log.Warningf("Failed to update Chart %d [Attemp %d] : Error %s", item, j, err.Error())
 					}
 				}

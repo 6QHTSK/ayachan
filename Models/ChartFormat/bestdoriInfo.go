@@ -1,8 +1,8 @@
 package ChartFormat
 
 import (
-	"ayachanV2/Models"
-	"ayachanV2/Models/MapFormat"
+	"ayachan/Models"
+	"ayachan/Models/MapFormat"
 	"time"
 )
 

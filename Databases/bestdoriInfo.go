@@ -1,7 +1,7 @@
 package Databases
 
 import (
-	"ayachanV2/Models/ChartFormat"
+	"ayachan/Models/ChartFormat"
 )
 
 func GetCharterPostRank(page int, limit int) (list []ChartFormat.CharterRankItem, err error) {
