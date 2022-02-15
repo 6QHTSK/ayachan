@@ -1,8 +1,8 @@
 package Services
 
 import (
-	"ayachan/Models"
-	"ayachan/Models/ChartFormat"
+	"github.com/6QHTSK/ayachan/Models"
+	"github.com/6QHTSK/ayachan/Models/ChartFormat"
 )
 
 // diffLevels 对应每个等级的记录最低Level，下一个为记录最高Level
@@ -121,23 +121,23 @@ func getLevelCompare(diffType int, diff ChartFormat.DiffType, value float64, tot
 }
 
 // StandardDifficultyGetter 获得标准 谱面难度 信息,除了Irregular项
-func StandardDifficultyGetter(Info Models.MapInfoStandard, diff ChartFormat.DiffType) (StandardDifficulty Models.MapDifficultyStandard, newDiff ChartFormat.DiffType) {
-	newDiff = getTrueDiff(diff, Info.TotalNPS, Info.TotalHPS)
+func StandardDifficultyGetter(metrics Models.MapMetricsStandard, diff ChartFormat.DiffType) (StandardDifficulty Models.MapDifficultyStandard, newDiff ChartFormat.DiffType) {
+	newDiff = getTrueDiff(diff, metrics.TotalNPS, metrics.TotalHPS)
 	StandardDifficulty = Models.MapDifficultyStandard{
-		TotalNPS:     getLevelCalc(diffTypeTotalNPS, newDiff, Info.TotalNPS),
-		TotalHPS:     getLevelCalc(diffTypeTotalHPS, newDiff, Info.TotalHPS),
-		MaxScreenNPS: getLevelCalc(diffTypeMaxScreenNPS, newDiff, Info.MaxScreenNPS),
+		TotalNPS:     getLevelCalc(diffTypeTotalNPS, newDiff, metrics.TotalNPS),
+		TotalHPS:     getLevelCalc(diffTypeTotalHPS, newDiff, metrics.TotalHPS),
+		MaxScreenNPS: getLevelCalc(diffTypeMaxScreenNPS, newDiff, metrics.MaxScreenNPS),
 	}
 	StandardDifficulty.Difficulty = (StandardDifficulty.TotalNPS*4.0 + StandardDifficulty.TotalHPS*2.0 + StandardDifficulty.MaxScreenNPS) / 7.0
 	return StandardDifficulty, newDiff
 }
 
 // ExtendDifficultyGetter 获得标准 谱面难度 信息,除了Irregular项
-func ExtendDifficultyGetter(Info Models.MapInfoExtend, diff ChartFormat.DiffType, level float64) (ExtendDifficulty Models.MapDifficultyExtend) {
-	return Models.MapDifficultyExtend{
-		MaxSpeed:          getLevelCompare(diffTypeMaxSpeed, diff, Info.MaxSpeed, level),
-		FingerMaxHPS:      getLevelCompare(diffTypeFingerMaxHPS, diff, Info.FingerMaxHPS, level),
-		FlickNoteInterval: getLevelCompare(diffTypeFlickNoteInterval, diff, Info.FlickNoteInterval, level),
-		NoteFlickInterval: getLevelCompare(diffTypeNoteFlickInterval, diff, Info.NoteFlickInterval, level),
+func ExtendDifficultyGetter(metrics Models.MapMetricsExtend, diff ChartFormat.DiffType, level float64) (ExtendDifficulty *Models.MapDifficultyExtend) {
+	return &Models.MapDifficultyExtend{
+		MaxSpeed:          getLevelCompare(diffTypeMaxSpeed, diff, metrics.MaxSpeed, level),
+		FingerMaxHPS:      getLevelCompare(diffTypeFingerMaxHPS, diff, metrics.FingerMaxHPS, level),
+		FlickNoteInterval: getLevelCompare(diffTypeFlickNoteInterval, diff, metrics.FlickNoteInterval, level),
+		NoteFlickInterval: getLevelCompare(diffTypeNoteFlickInterval, diff, metrics.NoteFlickInterval, level),
 	}
 }

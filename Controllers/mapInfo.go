@@ -1,11 +1,11 @@
 package Controllers
 
 import (
-	"ayachan/Models"
-	"ayachan/Models/ChartFormat"
-	"ayachan/Services"
-	"ayachan/utils"
 	"fmt"
+	"github.com/6QHTSK/ayachan/Models"
+	"github.com/6QHTSK/ayachan/Models/ChartFormat"
+	"github.com/6QHTSK/ayachan/Services"
+	"github.com/6QHTSK/ayachan/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"

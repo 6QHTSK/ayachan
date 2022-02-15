@@ -1,13 +1,13 @@
 package main
 
 import (
-	"ayachan/Config"
-	"ayachan/Databases"
-	"ayachan/Log"
-	"ayachan/Router"
-	"ayachan/Services"
 	"flag"
 	"fmt"
+	"github.com/6QHTSK/ayachan/Config"
+	"github.com/6QHTSK/ayachan/Databases"
+	"github.com/6QHTSK/ayachan/Log"
+	"github.com/6QHTSK/ayachan/Router"
+	"github.com/6QHTSK/ayachan/Services"
 	"github.com/jmoiron/sqlx"
 	"github.com/manifoldco/promptui"
 )

@@ -16,34 +16,38 @@ type BestdoriV2Note struct {
 }
 
 type BestdoriV2BasicNote struct {
-	Beat_  interface{} `json:"beat,omitempty"` //Omitempty need to be interface,Beat_ may be 0.0
-	Lane_  interface{} `json:"lane,omitempty"`
-	Flick  bool        `json:"flick,omitempty"`
-	Hidden bool        `json:"hidden,omitempty"`
+	Beat_  *float64 `json:"beat,omitempty"`
+	Lane_  *float64 `json:"lane,omitempty"`
+	Flick  bool     `json:"flick,omitempty"`
+	Hidden bool     `json:"hidden,omitempty"`
 }
 
 func (note BestdoriV2Note) Beat() (value float64) {
-	var ok bool
 	if len(note.Connections) == 0 {
-		value, ok = note.Beat_.(float64)
+		if note.Beat_ == nil {
+			return value
+		}
+		value = *note.Beat_
 	} else {
-		value, ok = note.Connections[0].Beat_.(float64)
-	}
-	if !ok {
-		return 0
+		if note.Connections[0].Beat_ == nil {
+			return value
+		}
+		value = *note.Connections[0].Beat_
 	}
 	return value
 }
 
 func (note BestdoriV2Note) Lane() (value float64) {
-	var ok bool
 	if len(note.Connections) == 0 {
-		value, ok = note.Lane_.(float64)
+		if note.Lane_ == nil {
+			return value
+		}
+		value = *note.Lane_
 	} else {
-		value, ok = note.Connections[0].Lane_.(float64)
-	}
-	if !ok {
-		return 0
+		if note.Connections[0].Lane_ == nil {
+			return value
+		}
+		value = *note.Connections[0].Lane_
 	}
 	return value
 }
@@ -91,40 +95,31 @@ func (formatChart BestdoriV2Chart) MapCheck() (result bool, err error) {
 			}
 			fallthrough
 		case "Single":
-			currentBeat, ok := formatNote.Beat_.(float64)
-			if !ok || currentBeat < 0.0 {
-				return false, fmt.Errorf("无法解析某个音符的节拍/节拍数小于0")
+			if formatNote.Lane_ == nil {
+				return false, fmt.Errorf("有单键不含有Lane字段")
 			}
-			_, ok = formatNote.Lane_.(float64) // 音符轨道可以被修正，在后续Decode部分修正
-			if !ok {
-				return false, fmt.Errorf("无法解析某个音符的轨道")
-			}
+			// 负Beat,超范围Lane将在Decode修复
 			if len(formatNote.Connections) != 0 {
 				return false, fmt.Errorf("单键错误的拥有Connections字段")
 			}
-		case "Long":
 			fallthrough
-		case "Slide":
-			// 绿条长度可以被修正，在后续Decode部分修正
-			for _, formatTick := range formatNote.Connections {
-				currentBeat, ok := formatTick.Beat_.(float64)
-				if !ok || currentBeat < 0.0 {
-					return false, fmt.Errorf("无法解析某个绿条节点的节拍/节拍数小于0")
-				}
-				_, ok = formatTick.Lane_.(float64)
-				if !ok {
-					return false, fmt.Errorf("无法解析某个绿条节点的轨道")
-				}
-			}
 		case "BPM":
-			_, ok := formatNote.Beat_.(float64)
-			if !ok {
-				return false, fmt.Errorf("无法解析BPM节点的节拍")
+			if formatNote.Beat_ == nil {
+				return false, fmt.Errorf("有单键/BPM不含有Beat字段")
 			}
 			if len(formatNote.Connections) != 0 {
 				return false, fmt.Errorf("BPM错误的拥有Connections字段")
 			}
 			// BPM的正负，不在0.0Beat的BPM音符会在Decode部分修正
+		case "Long":
+			fallthrough
+		case "Slide":
+			// 绿条长度可以被修正，在后续Decode部分修正
+			for _, formatTick := range formatNote.Connections {
+				if formatTick.Beat_ == nil || formatTick.Lane_ == nil {
+					return false, fmt.Errorf("有Slide/Long中的节点不含有Beat/Lane字段")
+				}
+			}
 		default:
 			// 不知道的音符会在Decode部分扔掉
 		}
@@ -212,8 +207,8 @@ func (formatChart BestdoriV2Chart) Decode() (Chart Chart) {
 				for i := 1; i < connectionsCount; i++ {
 					note = Note{
 						Type:   NoteTypeSlide,
-						Beat:   formatNote.Connections[i].Beat_.(float64) - FirstBPMBeat,
-						Lane:   fixLane(formatNote.Connections[i].Lane_.(float64), formatNote.Connections[i].Hidden),
+						Beat:   *formatNote.Connections[i].Beat_ - FirstBPMBeat,
+						Lane:   fixLane(*formatNote.Connections[i].Lane_, formatNote.Connections[i].Hidden),
 						Pos:    SlideCounter,
 						Hidden: formatNote.Connections[i].Hidden,
 						Status: SlideEnd,
@@ -292,8 +287,8 @@ func (chart Chart) EncodeBestdoriV2() (formatChart BestdoriV2Chart, err error) {
 				if note.Type == NoteTypeSlide && note.Pos == chart[j].Pos {
 					var tick = chart[j]
 					basicNote := BestdoriV2BasicNote{
-						Beat_:  tick.Beat,
-						Lane_:  tick.Lane,
+						Beat_:  &tick.Beat,
+						Lane_:  &tick.Lane,
 						Flick:  tick.Flick,
 						Hidden: tick.Hidden,
 					}
@@ -321,8 +316,8 @@ func (chart Chart) EncodeBestdoriV2() (formatChart BestdoriV2Chart, err error) {
 			}
 			formatNote.Direction, formatNote.Width = directionConvert(note.Direction)
 			formatNote.BestdoriV2BasicNote = BestdoriV2BasicNote{
-				Beat_: note.Beat,
-				Lane_: note.Lane,
+				Beat_: &note.Beat,
+				Lane_: &note.Lane,
 				Flick: note.Flick && note.Direction == 0,
 			}
 			formatChart = append(formatChart, formatNote)

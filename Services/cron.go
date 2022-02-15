@@ -1,7 +1,7 @@
 package Services
 
 import (
-	"ayachan/Log"
+	"github.com/6QHTSK/ayachan/Log"
 	"github.com/robfig/cron/v3"
 	"sync"
 )

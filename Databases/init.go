@@ -1,8 +1,8 @@
 package Databases
 
 import (
-	"ayachan/Config"
-	"ayachan/Log"
+	"github.com/6QHTSK/ayachan/Config"
+	"github.com/6QHTSK/ayachan/Log"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"github.com/meilisearch/meilisearch-go"

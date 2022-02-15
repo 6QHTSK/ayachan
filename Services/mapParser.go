@@ -1,10 +1,10 @@
 package Services
 
 import (
-	"ayachan/Log"
-	"ayachan/Models"
-	"ayachan/Models/MapFormat"
 	"fmt"
+	"github.com/6QHTSK/ayachan/Log"
+	"github.com/6QHTSK/ayachan/Models"
+	"github.com/6QHTSK/ayachan/Models/MapFormat"
 	"math"
 )
 

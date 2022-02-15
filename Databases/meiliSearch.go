@@ -1,11 +1,11 @@
 package Databases
 
 import (
-	"ayachan/Models/ChartFormat"
-	"ayachan/Models/DatabaseModel"
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/6QHTSK/ayachan/Models/ChartFormat"
+	"github.com/6QHTSK/ayachan/Models/DatabaseModel"
 	"github.com/meilisearch/meilisearch-go"
 	"strconv"
 	"time"

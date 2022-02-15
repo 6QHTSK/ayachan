@@ -1,16 +1,16 @@
 package Services
 
 import (
-	"ayachan/Models"
-	"ayachan/Models/ChartFormat"
-	"ayachan/Models/MapFormat"
-	"ayachan/utils"
 	"container/heap"
+	"github.com/6QHTSK/ayachan/Models"
+	"github.com/6QHTSK/ayachan/Models/ChartFormat"
+	"github.com/6QHTSK/ayachan/Models/MapFormat"
+	"github.com/6QHTSK/ayachan/utils"
 	"math"
 )
 
-// basicInfoGetter 获得最基础的谱面信息(除了Irregular项)、Hit总数、HPS
-func basicInfoGetter(Map MapFormat.Chart) (info Models.MapInfoBasic, TotalHitCount int, TotalHPS float64, BPMInfo Models.BpmInfo, err error) {
+// basicMetricsGetter 获得最基础的谱面信息(除了Irregular项)、Hit总数、HPS
+func basicMetricsGetter(Map MapFormat.Chart) (info Models.MapMetricsBasic, TotalHitCount int, TotalHPS float64, BPMInfo Models.BpmInfo, err error) {
 	var BPMList map[float64]float64
 	var firstNoteTime float64
 	BPMList = make(map[float64]float64)
@@ -80,11 +80,9 @@ func counter(Map MapFormat.Chart) (NoteCount Models.NoteCount) {
 		case MapFormat.NoteTypeSingle:
 			if note.Flick {
 				if note.Direction > 0 {
-					NoteCount.Direction.Total++
-					NoteCount.Direction.Right++
+					NoteCount.DirectionRight++
 				} else if note.Direction < 0 {
-					NoteCount.Direction.Total++
-					NoteCount.Direction.Left++
+					NoteCount.DirectionLeft++
 				} else {
 					NoteCount.Flick++
 				}
@@ -143,15 +141,15 @@ func distribution(Map MapFormat.Chart, totalTime float64) (MaxScreenNPS float64,
 }
 
 // StandardInfoGetter 获得标准谱面信息,除了Irregular项
-func StandardInfoGetter(Map MapFormat.Chart) (StandardInfo Models.MapInfoStandard) {
-	StandardInfo.MapInfoBasic, StandardInfo.TotalHitNote, StandardInfo.TotalHPS, StandardInfo.BpmInfo, _ = basicInfoGetter(Map)
+func StandardInfoGetter(Map MapFormat.Chart) (StandardInfo Models.MapMetricsStandard) {
+	StandardInfo.MapMetricsBasic, StandardInfo.TotalHitNote, StandardInfo.TotalHPS, StandardInfo.BpmInfo, _ = basicMetricsGetter(Map)
 	StandardInfo.NoteCount = counter(Map)
 	StandardInfo.MaxScreenNPS, StandardInfo.Distribution = distribution(Map, Map[len(Map)-1].Time)
 	return StandardInfo
 }
 
-// ExtendInfoGetter 获得扩展谱面信息
-func ExtendInfoGetter(ParsedMap MapFormat.ParsedChart) (ExtendInfo Models.MapInfoExtend) {
+// ExtendMetricsGetter 获得扩展谱面信息
+func ExtendMetricsGetter(ParsedMap MapFormat.ParsedChart) (ExtendInfo *Models.MapMetricsExtend) {
 	var leftCount, RightCount int
 	var MaxSpeed, FingerMaxHPSLeft, FingerMaxHPSRight, FlickNoteInterval, NoteFlickInterval Models.Float64Heap
 	heap.Init(&MaxSpeed)
@@ -180,34 +178,34 @@ func ExtendInfoGetter(ParsedMap MapFormat.ParsedChart) (ExtendInfo Models.MapInf
 		}
 	}
 	totalCount := leftCount + RightCount
-	ExtendInfo.LeftPercent = float64(leftCount) / float64(totalCount)
-	ExtendInfo.FingerMaxHPS = math.Max(FingerMaxHPSLeft.GetTopRankAverage(), FingerMaxHPSRight.GetTopRankAverage())
-	ExtendInfo.MaxSpeed = MaxSpeed.GetTopRankAverage()
-	ExtendInfo.FlickNoteInterval = FlickNoteInterval.GetTopRankAverage()
-	ExtendInfo.NoteFlickInterval = NoteFlickInterval.GetTopRankAverage()
-	return ExtendInfo
+	return &Models.MapMetricsExtend{
+		LeftPercent:       float64(leftCount) / float64(totalCount),
+		MaxSpeed:          math.Max(FingerMaxHPSLeft.GetTopRankAverage(), FingerMaxHPSRight.GetTopRankAverage()),
+		FingerMaxHPS:      MaxSpeed.GetTopRankAverage(),
+		FlickNoteInterval: FlickNoteInterval.GetTopRankAverage(),
+		NoteFlickInterval: NoteFlickInterval.GetTopRankAverage(),
+	}
 }
 
 // MapInfoGetter 获得全部的谱面信息
 func MapInfoGetter(Map MapFormat.Chart, diff ChartFormat.DiffType) (MapInfo Models.MapInfo) {
-	//var ParsedChart MapFormat.ParsedChart
 	MapInfoStandard := StandardInfoGetter(Map)
 	MapDifficultyStandard, diff := StandardDifficultyGetter(MapInfoStandard, diff)
 
 	var ParsedMap MapFormat.ParsedChart
-	ParsedMap, MapInfoStandard.MapInfoBasic.IrregularInfo = ParseMap(Map)
-	//_, MapInfoStandard.MapInfoBasic.IrregularInfo = ParseMap(Map)
+	ParsedMap, MapInfoStandard.MapMetricsBasic.IrregularInfo = ParseMap(Map)
 
-	var MapInfoExtend, MapDifficultyExtend interface{}
+	var MapInfoExtend *Models.MapMetricsExtend
+	var MapDifficultyExtend *Models.MapDifficultyExtend
 	if MapInfoStandard.Irregular == Models.RegularTypeRegular {
-		MapInfoExtend = ExtendInfoGetter(ParsedMap)
-		MapDifficultyExtend = ExtendDifficultyGetter(MapInfoExtend.(Models.MapInfoExtend), diff, MapDifficultyStandard.Difficulty)
+		MapInfoExtend = ExtendMetricsGetter(ParsedMap)
+		MapDifficultyExtend = ExtendDifficultyGetter(*MapInfoExtend, diff, MapDifficultyStandard.Difficulty)
 	}
 
 	return Models.MapInfo{
-		MapInfo:             MapInfoStandard,
-		MapInfoExtend:       MapInfoExtend,
-		MapDifficulty:       MapDifficultyStandard,
+		MapMetrics:          &MapInfoStandard,
+		MapMetricsExtend:    MapInfoExtend,
+		MapDifficulty:       &MapDifficultyStandard,
 		MapDifficultyExtend: MapDifficultyExtend,
 	}
 }

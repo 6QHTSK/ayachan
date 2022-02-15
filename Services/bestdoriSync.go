@@ -1,18 +1,17 @@
 package Services
 
 import (
-	"ayachan/Config"
-	"ayachan/Databases"
-	"ayachan/Log"
-	"ayachan/Models"
-	"ayachan/Models/ChartFormat"
-	"ayachan/utils"
 	"fmt"
+	"github.com/6QHTSK/ayachan/Config"
+	"github.com/6QHTSK/ayachan/Databases"
+	"github.com/6QHTSK/ayachan/Log"
+	"github.com/6QHTSK/ayachan/Models"
+	"github.com/6QHTSK/ayachan/Models/ChartFormat"
+	"github.com/6QHTSK/ayachan/utils"
 	"math"
 	"math/rand"
 	"net/http"
 	"net/url"
-	"strings"
 	"sync"
 	"time"
 )
@@ -125,10 +124,6 @@ func BestdoriFanMadeSyncPage(page int) (totalCount int, errCode int, err error) 
 						Log.Log.Tracef("Success Update Chart %d [Attemp %d]", item, j)
 						return
 					} else {
-						if strings.Contains("BPM", err.Error()) {
-							Log.Log.Warningf("BPM Fault, stop")
-							return
-						}
 						Log.Log.Warningf("Failed to update Chart %d [Attemp %d] : Error %s", item, j, err.Error())
 					}
 				}
@@ -159,7 +154,7 @@ func BestdoriFanMadeInsertID(chartID int) (errorCode int, err error) {
 	Map := request.Info.Chart.Decode()
 
 	// Insert
-	bestdoriChartItem.MapInfoBasic, _, _, _, _ = basicInfoGetter(Map)
+	bestdoriChartItem.MapMetricsBasic, _, _, _, _ = basicMetricsGetter(Map)
 	_, bestdoriChartItem.IrregularInfo = ParseMap(Map)
 
 	if bestdoriChartItem.IrregularInfo.Irregular == Models.RegularTypeUnknown {

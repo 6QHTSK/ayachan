@@ -1,8 +1,8 @@
 package Controllers
 
 import (
-	"ayachan/Databases"
-	"ayachan/utils"
+	"github.com/6QHTSK/ayachan/Databases"
+	"github.com/6QHTSK/ayachan/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

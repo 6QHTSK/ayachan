@@ -1,10 +1,10 @@
 package Router
 
 import (
-	"ayachan/Config"
-	"ayachan/Controllers"
-	"ayachan/Log"
-	"ayachan/Midware"
+	"github.com/6QHTSK/ayachan/Config"
+	"github.com/6QHTSK/ayachan/Controllers"
+	"github.com/6QHTSK/ayachan/Log"
+	"github.com/6QHTSK/ayachan/Midware"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )

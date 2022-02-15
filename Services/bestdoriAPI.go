@@ -1,10 +1,10 @@
 package Services
 
 import (
-	"ayachan/Config"
-	"ayachan/Models/MapFormat"
-	"ayachan/utils"
 	"fmt"
+	"github.com/6QHTSK/ayachan/Config"
+	"github.com/6QHTSK/ayachan/Models/MapFormat"
+	"github.com/6QHTSK/ayachan/utils"
 	"net/http"
 	"net/url"
 )

@@ -1,4 +1,4 @@
-module ayachan
+module github.com/6QHTSK/ayachan
 
 go 1.16
 

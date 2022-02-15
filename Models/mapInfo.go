@@ -11,45 +11,41 @@ const (
 type DifficultyDescription int
 
 const (
-	DifficultyUnknown DifficultyDescription = iota // 该项难度未知
-	DifficultyLow                                  // 该项难度偏低
-	DifficultyNormal                               // 该项难度正常
-	DifficultyHigh                                 // 该项难度偏高
+	DifficultyLow    = -1 // 该项难度偏低
+	DifficultyNormal = 0  // 该项难度正常
+	DifficultyHigh   = 1  // 该项难度偏高
 )
 
 type BpmInfo struct {
-	BPMLow  float64
-	BPMHigh float64
-	MainBPM float64
+	BPMLow  float64 `json:"bpm-low"`
+	BPMHigh float64 `json:"bpm-high"`
+	MainBPM float64 `json:"main-bpm"`
 }
 
 type IrregularInfo struct {
 	Irregular     RegularType `json:"irregular"`      // 存在多压/交叉（出张）0 失败 1 标准 2 非标准
-	IrregularInfo string      `json:"irregular_info"` // 无法分析的第一个错误情况
+	IrregularInfo string      `json:"irregular-info"` // 无法分析的第一个错误情况
 }
 
 type NoteCount struct {
-	Single      int
-	Flick       int
-	SlideStart  int
-	SlideTick   int
-	SlideEnd    int
-	SlideFlick  int
-	SlideHidden int
-	Direction   struct {
-		Total int
-		Left  int
-		Right int
-	}
+	Single         int `json:"single"`
+	Flick          int `json:"flick"`
+	SlideStart     int `json:"slideStart"`
+	SlideTick      int `json:"slideTick"`
+	SlideEnd       int `json:"slideEnd"`
+	SlideFlick     int `json:"slideFlick"`
+	SlideHidden    int `json:"slideHidden"`
+	DirectionLeft  int `json:"direction-left"`
+	DirectionRight int `json:"direction-right"`
 }
 
 type Distribution struct {
-	Note []int
-	Hit  []int
+	Note []int `json:"note"`
+	Hit  []int `json:"hit"`
 }
 
-// MapInfoBasic 将会放入数据库存档的数据部分
-type MapInfoBasic struct {
+// MapMetricsBasic 将会放入数据库存档的数据部分
+type MapMetricsBasic struct {
 	IrregularInfo
 	TotalNote int     `json:"total_note"`
 	TotalTime float64 `json:"total_time"`
@@ -57,48 +53,48 @@ type MapInfoBasic struct {
 	SPRhythm  bool    `json:"sp_rhythm"`
 }
 
-// MapInfoStandard 基础部分，不要求正常谱面
-type MapInfoStandard struct {
-	MapInfoBasic
+// MapMetricsStandard 基础部分，不要求正常谱面
+type MapMetricsStandard struct {
+	MapMetricsBasic
 
 	BpmInfo
-	TotalHitNote int
-	MaxScreenNPS float64
-	TotalHPS     float64
+	TotalHitNote int     `json:"total-hit-note"`
+	MaxScreenNPS float64 `json:"max-screen-nps"`
+	TotalHPS     float64 `json:"total-hps"`
 
 	NoteCount    NoteCount
 	Distribution Distribution
 }
 
-// MapInfoExtend 扩展部分，要求正常谱面，非正常时为nil
-type MapInfoExtend struct {
-	LeftPercent       float64
-	MaxSpeed          float64
-	FingerMaxHPS      float64
-	FlickNoteInterval float64
-	NoteFlickInterval float64
+// MapMetricsExtend 扩展部分，要求正常谱面，非正常时为nil
+type MapMetricsExtend struct {
+	LeftPercent       float64 `json:"left-percent"`
+	MaxSpeed          float64 `json:"max-speed"`
+	FingerMaxHPS      float64 `json:"finger-max-hps"`
+	FlickNoteInterval float64 `json:"flick-note-interval"`
+	NoteFlickInterval float64 `json:"note-flick-interval"`
 }
 
 // MapDifficultyStandard 基础部分，不要求正常谱面
 type MapDifficultyStandard struct {
-	TotalNPS            float64
-	TotalHPS            float64
-	MaxScreenNPS        float64
-	Difficulty          float64
-	BlueWhiteDifficulty float64
+	TotalNPS            float64 `json:"total-nps"`
+	TotalHPS            float64 `json:"total-hps"`
+	MaxScreenNPS        float64 `json:"max-screen-nps"`
+	Difficulty          float64 `json:"difficulty"`
+	BlueWhiteDifficulty float64 `json:"blue-white-difficulty"`
 }
 
 // MapDifficultyExtend 扩展部分，要求正常谱面，非正常时为nil
 type MapDifficultyExtend struct {
-	MaxSpeed          DifficultyDescription
-	FingerMaxHPS      DifficultyDescription
-	FlickNoteInterval DifficultyDescription
-	NoteFlickInterval DifficultyDescription
+	MaxSpeed          DifficultyDescription `json:"max-speed"`
+	FingerMaxHPS      DifficultyDescription `json:"finger-max-hps"`
+	FlickNoteInterval DifficultyDescription `json:"flick-note-interval"`
+	NoteFlickInterval DifficultyDescription `json:"note-flick-interval"`
 }
 
 type MapInfo struct {
-	MapInfo             MapInfoStandard
-	MapInfoExtend       interface{} // MapInfoExtend
-	MapDifficulty       MapDifficultyStandard
-	MapDifficultyExtend interface{} // MapDifficultyExtend
+	MapMetrics          *MapMetricsStandard    `json:"map-metrics"`
+	MapMetricsExtend    *MapMetricsExtend      `json:"map-metrics-extend,omitempty"`
+	MapDifficulty       *MapDifficultyStandard `json:"map-difficulty"`
+	MapDifficultyExtend *MapDifficultyExtend   `json:"map-difficulty-extend,omitempty"`
 }

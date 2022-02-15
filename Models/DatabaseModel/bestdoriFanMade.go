@@ -1,8 +1,8 @@
 package DatabaseModel
 
 import (
-	"ayachan/Models"
-	"ayachan/Models/ChartFormat"
+	"github.com/6QHTSK/ayachan/Models"
+	"github.com/6QHTSK/ayachan/Models/ChartFormat"
 	"time"
 )
 
@@ -81,7 +81,7 @@ func (d BestdoriFanMadeView) ToBestdoriChart() ChartFormat.BestdoriChartItem {
 		PostTime:       d.PostTime,
 		LastUpdateTime: d.LastUpdate,
 		Content:        d.Content,
-		MapInfoBasic: Models.MapInfoBasic{
+		MapMetricsBasic: Models.MapMetricsBasic{
 			IrregularInfo: Models.IrregularInfo{
 				Irregular: Models.RegularType(d.Irregular),
 			},

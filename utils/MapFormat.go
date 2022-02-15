@@ -1,16 +1,16 @@
 package utils
 
 import (
-	"ayachan/Models/MapFormat"
 	"fmt"
+	"github.com/6QHTSK/ayachan/Models/MapFormat"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"net/http"
 )
 
 type MapInput struct {
-	MapFormatIn string            `json:"map_format_in"`
-	Options     map[string]string `json:"Options"`
+	MapFormatIn string            `json:"map-format-in"`
+	Options     map[string]string `json:"options"`
 	Map         interface{}       `json:"map"`
 }
 

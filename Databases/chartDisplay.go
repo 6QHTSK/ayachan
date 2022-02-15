@@ -1,6 +1,6 @@
 package Databases
 
-import "ayachan/Models/ChartFormat"
+import "github.com/6QHTSK/ayachan/Models/ChartFormat"
 
 func GetChartDisplay(page int, limit int) (ChartSet []ChartFormat.Chart, suc bool) {
 	return ChartSet, true

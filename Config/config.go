@@ -50,7 +50,7 @@ func NewYamlConfig() *YamlConfig {
 }
 
 func init() {
-	Version = "2.0.3"
+	Version = "2.0.4"
 	Config = NewYamlConfig()
 	yamlFile, err := ioutil.ReadFile("conf.yaml")
 	if err != nil {

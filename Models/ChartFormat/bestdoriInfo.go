@@ -1,8 +1,8 @@
 package ChartFormat
 
 import (
-	"ayachan/Models"
-	"ayachan/Models/MapFormat"
+	"github.com/6QHTSK/ayachan/Models"
+	"github.com/6QHTSK/ayachan/Models/MapFormat"
 	"time"
 )
 
@@ -32,12 +32,12 @@ type BestdoriChartItem struct {
 		Cover string `json:"cover"`
 		Audio string `json:"audio"`
 	} `json:"song_url"` // 谱面资源
-	Likes               int                       `json:"likes,omitempty"` // 喜爱数
-	PostTime            uint64                    `json:"time,omitempty"`  // 时间戳
-	LastUpdateTime      time.Time                 `json:"last_update"`
-	Content             string                    `json:"content"`
-	Chart               MapFormat.BestdoriV2Chart `json:"chart,omitempty"` // 谱面
-	Models.MapInfoBasic                           // 一些易得的谱面数据 用于某些项
+	Likes                  int                       `json:"likes,omitempty"` // 喜爱数
+	PostTime               uint64                    `json:"time,omitempty"`  // 时间戳
+	LastUpdateTime         time.Time                 `json:"last_update"`
+	Content                string                    `json:"content"`
+	Chart                  MapFormat.BestdoriV2Chart `json:"chart,omitempty"` // 谱面
+	Models.MapMetricsBasic                           // 一些易得的谱面数据 用于某些项
 }
 
 type BestdoriChartUpdateItem struct {

@@ -1,10 +1,10 @@
 package Databases
 
 import (
-	"ayachan/Config"
-	"ayachan/Models/ChartFormat"
-	"ayachan/Models/DatabaseModel"
 	"database/sql"
+	"github.com/6QHTSK/ayachan/Config"
+	"github.com/6QHTSK/ayachan/Models/ChartFormat"
+	"github.com/6QHTSK/ayachan/Models/DatabaseModel"
 	"time"
 )
 

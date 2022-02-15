@@ -1,7 +1,7 @@
 package ChartFormat
 
 import (
-	"ayachan/Models"
+	"github.com/6QHTSK/ayachan/Models"
 )
 
 type AuthorID int
@@ -23,10 +23,10 @@ type Chart struct {
 		AuthorName string   // Author_Other 其他作者时使用的名义
 	}
 	Diffs []struct {
-		BestdoriChartID     int // Bestdori的谱面ID 0 就是未发表
-		Diff                DiffType
-		Level               int
-		Models.MapInfoBasic // 一些易得的谱面数据
+		BestdoriChartID        int // Bestdori的谱面ID 0 就是未发表
+		Diff                   DiffType
+		Level                  int
+		Models.MapMetricsBasic // 一些易得的谱面数据
 	}
 	SongUrl struct {
 		Cover string

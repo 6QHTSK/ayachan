@@ -1,9 +1,9 @@
 package Services
 
 import (
-	"ayachan/Databases"
-	"ayachan/Models/ChartFormat"
 	"fmt"
+	"github.com/6QHTSK/ayachan/Databases"
+	"github.com/6QHTSK/ayachan/Models/ChartFormat"
 	"math"
 )
 
