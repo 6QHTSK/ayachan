@@ -22,6 +22,10 @@ func init() {
 		},
 	})
 
+	if err != nil {
+		Log.Fatalf("Failed to initialize file rotate hook: %v", err)
+	}
+
 	rotateFileHook2, err := rotatefilehook.NewRotateFileHook(rotatefilehook.RotateFileConfig{
 		Filename:   "logs/console.log",
 		MaxSize:    50, // megabytes

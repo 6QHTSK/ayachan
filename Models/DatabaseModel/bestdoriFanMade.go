@@ -59,6 +59,14 @@ type BestdoriFanMadeMetrics struct {
 	Version   int  `db:"version"`
 }
 
+type BestdoriOverAllInfo struct {
+	ChartCount  int     `db:"chartCount" json:"chart-count"`
+	Latest      int     `db:"latest" json:"latest"`
+	TotalNote   int     `db:"totalNote" json:"total-note"`
+	TotalTime   float64 `db:"totalTime" json:"total-time"`
+	AuthorCount int     `db:"authorCount" json:"author-count"`
+}
+
 func (d BestdoriFanMadeView) ToBestdoriChart() ChartFormat.BestdoriChartItem {
 	return ChartFormat.BestdoriChartItem{
 		ChartID: d.ChartID,

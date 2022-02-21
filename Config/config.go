@@ -54,7 +54,7 @@ func init() {
 	Config = NewYamlConfig()
 	yamlFile, err := ioutil.ReadFile("conf.yaml")
 	if err != nil {
-		yamlConfig, err := yaml.Marshal(Config)
+		yamlConfig, _ := yaml.Marshal(Config)
 		err = ioutil.WriteFile("conf.yaml", yamlConfig, 0666)
 		if err != nil {
 			log.Fatal(err.Error())

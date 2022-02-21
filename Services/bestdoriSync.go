@@ -121,13 +121,13 @@ func BestdoriFanMadeSyncPage(page int) (totalCount int, errCode int, err error) 
 				for j = 1; j <= 5; j++ {
 					errCode, err = BestdoriFanMadeInsertID(item)
 					if err == nil {
-						Log.Log.Tracef("Success Update Chart %d [Attemp %d]", item, j)
+						Log.Log.Tracef("Success Update Chart %d [Attempt %d]", item, j)
 						return
 					} else {
-						Log.Log.Warningf("Failed to update Chart %d [Attemp %d] : Error %s", item, j, err.Error())
+						Log.Log.Warningf("Failed to update Chart %d [Attempt %d] : Error %s", item, j, err.Error())
 					}
 				}
-				Log.Log.Warningf("Attemp times exceed!")
+				Log.Log.Warningf("Attempt times exceed!")
 			}(i, item.ChartID, ch)
 		}
 	}

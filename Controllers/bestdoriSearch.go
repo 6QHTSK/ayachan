@@ -34,20 +34,20 @@ func BestdoriFanMadeSearch(c *gin.Context) {
 	}
 	search.FilterLevel(minLevel, maxLevel)
 
-	//minDiff, suc := utils.ConvertQueryInt(c, "diff_min", "0")
-	//if !suc {
-	//	return
-	//}
-	//maxDiff, suc := utils.ConvertQueryInt(c, "diff_max", "4")
-	//if !suc {
-	//	return
-	//}
-	//if minDiff > maxDiff {
-	//	temp := maxDiff
-	//	maxDiff = minDiff
-	//	minDiff = temp
-	//}
-	//search.FilterDiff(minDiff, maxDiff)
+	minDiff, suc := utils.ConvertQueryInt(c, "diff_min", "0")
+	if !suc {
+		return
+	}
+	maxDiff, suc := utils.ConvertQueryInt(c, "diff_max", "4")
+	if !suc {
+		return
+	}
+	if minDiff > maxDiff {
+		temp := maxDiff
+		maxDiff = minDiff
+		minDiff = temp
+	}
+	search.FilterDiff(minDiff, maxDiff)
 
 	minTimeInt, suc := utils.ConvertQueryInt(c, "time_min", "0")
 	if !suc {
