@@ -101,14 +101,15 @@ func BestdoriFanMadeSearch(c *gin.Context) {
 		search.FilterIrregular(regular == 1)
 	}
 
-	documents, totalPage, err := search.Search()
+	documents, totalCount, totalPage, err := search.Search()
 	if utils.ErrorHandle(c, http.StatusInternalServerError, err) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"result":    true,
-		"docs":      documents,
-		"totalPage": totalPage,
+		"result":     true,
+		"docs":       documents,
+		"totalCount": totalCount,
+		"totalPage":  totalPage,
 	})
 }
 

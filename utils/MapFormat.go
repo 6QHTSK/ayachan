@@ -9,7 +9,7 @@ import (
 )
 
 type MapInput struct {
-	MapFormatIn string            `json:"map-format-in"`
+	MapFormatIn string            `json:"map_format_in"`
 	Options     map[string]string `json:"options"`
 	Map         interface{}       `json:"map"`
 }
@@ -36,7 +36,7 @@ func ReadMap(c *gin.Context) (Map MapFormat.Chart, Options map[string]string, su
 
 	if inputOptions.MapFormatIn == "BestdoriV2" {
 		var input BestdoriV2Input
-		err := c.BindJSON(&input)
+		err := c.ShouldBindBodyWith(&input, binding.JSON)
 		if err != nil {
 			ErrorHandle(c, http.StatusBadRequest, fmt.Errorf("无法处理传入谱面"))
 			return Map, Options, false

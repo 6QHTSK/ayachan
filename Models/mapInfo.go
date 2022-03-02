@@ -17,26 +17,26 @@ const (
 )
 
 type BpmInfo struct {
-	BPMLow  float64 `json:"bpm-low"`
-	BPMHigh float64 `json:"bpm-high"`
-	MainBPM float64 `json:"main-bpm"`
+	BPMLow  float64 `json:"bpm_low"`
+	BPMHigh float64 `json:"bpm_high"`
+	MainBPM float64 `json:"main_bpm"`
 }
 
 type IrregularInfo struct {
 	Irregular     RegularType `json:"irregular"`      // 存在多压/交叉（出张）0 失败 1 标准 2 非标准
-	IrregularInfo string      `json:"irregular-info"` // 无法分析的第一个错误情况
+	IrregularInfo string      `json:"irregular_info"` // 无法分析的第一个错误情况
 }
 
 type NoteCount struct {
 	Single         int `json:"single"`
 	Flick          int `json:"flick"`
-	SlideStart     int `json:"slideStart"`
-	SlideTick      int `json:"slideTick"`
-	SlideEnd       int `json:"slideEnd"`
-	SlideFlick     int `json:"slideFlick"`
-	SlideHidden    int `json:"slideHidden"`
-	DirectionLeft  int `json:"direction-left"`
-	DirectionRight int `json:"direction-right"`
+	SlideStart     int `json:"slide_start"`
+	SlideTick      int `json:"slide_tick"`
+	SlideEnd       int `json:"slide_end"`
+	SlideFlick     int `json:"slide_flick"`
+	SlideHidden    int `json:"slide_hidden"`
+	DirectionLeft  int `json:"direction_left"`
+	DirectionRight int `json:"direction_right"`
 }
 
 type Distribution struct {
@@ -58,9 +58,9 @@ type MapMetricsStandard struct {
 	MapMetricsBasic
 
 	BpmInfo
-	TotalHitNote int     `json:"total-hit-note"`
-	MaxScreenNPS float64 `json:"max-screen-nps"`
-	TotalHPS     float64 `json:"total-hps"`
+	TotalHitNote int     `json:"total_hit_note"`
+	MaxScreenNPS float64 `json:"max_screen_nps"`
+	TotalHPS     float64 `json:"total_hps"`
 
 	NoteCount    NoteCount
 	Distribution Distribution
@@ -68,33 +68,33 @@ type MapMetricsStandard struct {
 
 // MapMetricsExtend 扩展部分，要求正常谱面，非正常时为nil
 type MapMetricsExtend struct {
-	LeftPercent       float64 `json:"left-percent"`
-	MaxSpeed          float64 `json:"max-speed"`
-	FingerMaxHPS      float64 `json:"finger-max-hps"`
-	FlickNoteInterval float64 `json:"flick-note-interval"`
-	NoteFlickInterval float64 `json:"note-flick-interval"`
+	LeftPercent       float64 `json:"left_percent"`
+	MaxSpeed          float64 `json:"max_speed"`
+	FingerMaxHPS      float64 `json:"finger_max_hps"`
+	FlickNoteInterval float64 `json:"flick_note_interval"`
+	NoteFlickInterval float64 `json:"note_flick_interval"`
 }
 
 // MapDifficultyStandard 基础部分，不要求正常谱面
 type MapDifficultyStandard struct {
-	TotalNPS            float64 `json:"total-nps"`
-	TotalHPS            float64 `json:"total-hps"`
-	MaxScreenNPS        float64 `json:"max-screen-nps"`
+	TotalNPS            float64 `json:"total_nps"`
+	TotalHPS            float64 `json:"total_hps"`
+	MaxScreenNPS        float64 `json:"max_screen_nps"`
 	Difficulty          float64 `json:"difficulty"`
-	BlueWhiteDifficulty float64 `json:"blue-white-difficulty"`
+	BlueWhiteDifficulty float64 `json:"blue_white_difficulty"`
 }
 
 // MapDifficultyExtend 扩展部分，要求正常谱面，非正常时为nil
 type MapDifficultyExtend struct {
-	MaxSpeed          DifficultyDescription `json:"max-speed"`
-	FingerMaxHPS      DifficultyDescription `json:"finger-max-hps"`
-	FlickNoteInterval DifficultyDescription `json:"flick-note-interval"`
-	NoteFlickInterval DifficultyDescription `json:"note-flick-interval"`
+	MaxSpeed          DifficultyDescription `json:"max_speed"`
+	FingerMaxHPS      DifficultyDescription `json:"finger_max_hps"`
+	FlickNoteInterval DifficultyDescription `json:"flick_note_interval"`
+	NoteFlickInterval DifficultyDescription `json:"note_flick_interval"`
 }
 
 type MapInfo struct {
-	MapMetrics          *MapMetricsStandard    `json:"map-metrics"`
-	MapMetricsExtend    *MapMetricsExtend      `json:"map-metrics-extend,omitempty"`
-	MapDifficulty       *MapDifficultyStandard `json:"map-difficulty"`
-	MapDifficultyExtend *MapDifficultyExtend   `json:"map-difficulty-extend,omitempty"`
+	MapMetrics          *MapMetricsStandard    `json:"map_metrics"`
+	MapMetricsExtend    *MapMetricsExtend      `json:"map_metrics_extend,omitempty"`
+	MapDifficulty       *MapDifficultyStandard `json:"map_difficulty"`
+	MapDifficultyExtend *MapDifficultyExtend   `json:"map_difficulty_extend,omitempty"`
 }

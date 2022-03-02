@@ -51,5 +51,10 @@ func InitAPIV2(router *gin.Engine) {
 			chartData.GET("/bestdori/:chartID", Controllers.MapDataFromBestdori)
 			chartData.POST("/", Controllers.MapData)
 		}
+		sonolus := v2.Group("/sonolus")
+		{
+			sonolus.POST("/upload/script", Controllers.RedirectSonolusUploadScript)
+			sonolus.POST("/upload/song", Controllers.RedirectSonolusUploadSong)
+		}
 	}
 }

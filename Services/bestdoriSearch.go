@@ -130,10 +130,10 @@ func (s *BestdoriSearch) Filter() (filter []string) {
 	return filter
 }
 
-func (s *BestdoriSearch) Search() (documents []ChartFormat.BestdoriChartItem, totalPage int64, err error) {
-	documents, totalPage, err = Databases.Query(s.queryString, s.page, s.limit, s.Filter())
+func (s *BestdoriSearch) Search() (documents []ChartFormat.BestdoriChartItem, totalCount int64, totalPage int64, err error) {
+	documents, totalCount, err = Databases.Query(s.queryString, s.page, s.limit, s.Filter())
 	totalPage = int64(math.Ceil(float64(totalPage) / float64(s.limit)))
-	return documents, totalPage, err
+	return documents, totalCount, totalPage, err
 }
 
 func BestdoriFanMadeGet(chartID int) (chart ChartFormat.BestdoriChartItem, err error) {
