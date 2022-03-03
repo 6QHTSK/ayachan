@@ -8,6 +8,7 @@ on: #监听的事件和分支配置
     branches:
       - master
       - development
+  workflow_dispatch:
 
 jobs:
   deploy:
