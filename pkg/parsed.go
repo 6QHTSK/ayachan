@@ -73,3 +73,7 @@ func (note ParsedNote) GetGapFront() (gap float64) {
 	}
 	return note.Lane - note.NotePrevious.Lane
 }
+
+func (note ParsedNote) GetInterval(note2 *ParsedNote) (interval float64) {
+	return math.Max(0.025, math.Abs(note.Time-note2.NotePrevious.Time))
+}

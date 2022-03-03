@@ -1,7 +1,7 @@
 package pkg
 
 // diffLevels 对应每个等级的记录最低Level，下一个为记录最高Level
-var diffLevels = [5]int{5, 11, 16, 21, 29}
+var diffLevels = [5]int{5, 11, 16, 22, 30}
 
 const (
 	diffTypeTotalNPS int = iota
@@ -16,76 +16,72 @@ const (
 // totalNPSStandard 对应NPS标准，减去最低Level为offset
 var standards = [][4][]float64{
 	{ // totalNPS
-		{0.61, 0.85, 1.16, 1.43, 1.6, 1.77, 2.1},
-		{1.62, 1.94, 2.23, 2.64, 2.96, 3.51},
-		{3.23, 3.81, 4.27, 4.67, 5.06, 5.49},
-		{3.84, 4.6, 4.81, 5.47, 6.13, 7.17, 8.12, 8.55, 9.85},
+		{0.538, 0.621, 0.910, 1.265, 1.503, 1.789, 2.026},
+		{1.334, 1.544, 2.024, 2.421, 2.866, 3.592},
+		{2.628, 3.227, 3.981, 4.535, 4.959, 5.562, 5.984},
+		{4.097, 4.464, 4.880, 5.438, 6.585, 7.978, 8.870, 9.470, 11.482},
 	},
 	{ // totalHPS
-		{0.58, 0.78, 0.98, 1.19, 1.33, 1.47, 1.72},
-		{1.49, 1.69, 1.92, 2.22, 2.49, 2.99},
-		{2.86, 3.13, 3.54, 3.84, 4.01, 4.32},
-		{3, 3.4, 3.81, 4.42, 5.02, 5.83, 6.53, 7, 7.77},
+		{0.531, 0.579, 0.797, 1.054, 1.267, 1.501, 1.703},
+		{1.134, 1.397, 1.695, 2.024, 2.431, 3.074},
+		{1.753, 2.681, 3.229, 3.721, 4.079, 4.453, 4.829},
+		{3.003, 3.295, 3.816, 4.366, 5.367, 6.481, 6.980, 7.771, 8.516},
 	},
 	{ // MaxScreenNPS
-		{1.19, 1.55, 2.01, 2.37, 2.55, 2.88, 3.36},
-		{2.63, 3.05, 3.43, 3.85, 4.26, 4.91},
-		{4.77, 5.31, 5.75, 6.18, 6.74, 7.12},
-		{5.82, 6.6, 6.7, 7.29, 8.07, 9.22, 10.5, 11.19, 13.01},
+		{1.094, 1.161, 1.576, 2.138, 2.452, 2.857, 3.345},
+		{2.219, 2.567, 3.111, 3.519, 4.207, 5.069},
+		{3.833, 4.710, 5.364, 6.032, 6.500, 7.296, 7.906},
+		{6.115, 6.353, 6.677, 7.296, 8.536, 10.219, 11.310, 12.704, 14.345},
 	},
 	{ // MaxSpeed
-		{1.19, 1.55, 2.01, 2.37, 2.55, 2.88, 3.36},
-		{2.63, 3.05, 3.43, 3.85, 4.26, 4.91},
-		{5.89, 7.07, 7.99, 9.58, 9.77, 11.63},
-		{6.56, 8.29, 8.66, 9.64, 11.5, 13.65, 15.61, 15.93, 19.66},
+		{0.474, 0.520, 0.855, 1.286, 1.608, 1.937, 2.290},
+		{1.771, 2.135, 2.687, 3.276, 4.214, 6.630},
+		{3.639, 4.848, 6.494, 9.083, 10.980, 12.787, 14.834},
+		{6.686, 7.080, 8.134, 9.687, 12.339, 15.671, 17.335, 19.757, 21.954},
 	},
 	{ //FingerMaxHPS
-		{0.63, 1.01, 1.33, 1.71, 1.87, 2.06, 2.43},
-		{2.02, 2.32, 2.55, 2.89, 3.16, 3.65},
-		{3.95, 4.17, 4.7, 5.07, 5.32, 5.81},
-		{4.87, 4.93, 4.97, 5.49, 5.94, 6.64, 7.35, 7.88, 8.69},
+		{0.518, 0.596, 0.976, 1.397, 1.728, 2.207, 2.559},
+		{1.417, 1.708, 2.200, 2.596, 3.159, 4.214},
+		{2.755, 3.512, 4.215, 4.929, 5.464, 6.067, 6.501},
+		{4.342, 4.546, 4.926, 5.387, 6.207, 7.242, 8.033, 9.270, 9.577},
 	},
 	{ //FlickNoteInterval
 		{},
 		{},
-		{1.31, 1.67, 2.06, 2.19, 2.4, 2.71},
-		{1.77, 2.4, 2.39, 2.43, 3.17, 3.86, 4.54, 5.19, 5.84},
+		{0.000, 0.000, 1.689, 2.222, 2.714, 3.111, 3.714},
+		{0.000, 0.944, 1.778, 2.429, 3.333, 4.722, 5.483, 6.323, 6.825},
 	},
 	{ //NoteFlickInterval
 		{},
 		{},
-		{2.08, 2.19, 2.6, 2.66, 3.1, 3.6},
-		{2.62, 2.84, 3.08, 3.51, 4.41, 5.21, 5.52, 5.84, 7.17},
+		{0.000, 0.000, 2.063, 2.747, 3.431, 4.107, 4.971},
+		{0.000, 1.689, 2.500, 3.514, 4.800, 5.906, 6.667, 8.629, 9.481},
 	},
 }
 
 var maxValue = [][3]float64{
-	{2.45, 4, 6.45},
-	{2, 3.35, 4.9},
+	{2.026, 3.592, 5.984}, // diffTypeTotalNPS
+	{1.703, 3.074, 4.829}, // diffTypeTotalHPS
 }
 
 // 要一定能拿到等级的
 func getLevelCalc(diffType int, diff int, value float64) (level float64) {
-	if diffType == diffTypeFlickNoteInterval || diffType == diffTypeNoteFlickInterval {
-		if diff <= 1 {
-			return level
-		}
-	}
-	baseLevel := float64(diffLevels[diff]) + 0.5
+	baseLevel := float64(diffLevels[diff])
 	standard := standards[diffType][diff]
-	for i, item := range standard {
-		if item > value {
+	for i, threshold := range standard {
+		if threshold > value { // 找到了较高等级
 			if i == 0 {
 				return baseLevel
 			} else {
-				return (baseLevel + float64(i)) + (value-item)/(item-standard[i-1])
+				lastThreshold := standard[i-1]
+				return (baseLevel + float64(i-1)) + (value-lastThreshold)/(threshold-lastThreshold)
 			}
 		}
 	}
-	MaxLevel := float64(diffLevels[diff+1]) + 0.5
-	levelPace := standard[len(standard)-1] - standard[len(standard)-2]
-	MaxLevelPos := standard[len(standard)-1]
-	return MaxLevel + (value-MaxLevelPos)/levelPace
+	maxLevel := float64(diffLevels[diff+1])
+	levelPace := (standard[len(standard)-1] - standard[len(standard)-3]) / 2
+	maxLevelThreshold := standard[len(standard)-1]
+	return maxLevel + (value-maxLevelThreshold)/levelPace
 }
 
 func getTrueDiff(diff int, totalNPS float64, totalHPS float64) (trueDiff int) {
@@ -106,9 +102,9 @@ func getLevelCompare(diffType int, diff int, value float64, totalLevel float64) 
 		}
 	}
 	level := getLevelCalc(diffType, diff, value)
-	if level-totalLevel > 0.5 {
+	if level-totalLevel > 1 {
 		return DifficultyHigh
-	} else if level-totalLevel < -0.5 {
+	} else if level-totalLevel < -1 {
 		return DifficultyLow
 	} else {
 		return DifficultyNormal

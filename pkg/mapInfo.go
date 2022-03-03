@@ -153,17 +153,23 @@ func extendMetricsGetter(ParsedMap ParsedChart) *MapMetricsExtend {
 	heap.Init(&FingerMaxHPSRight)
 	heap.Init(&FlickNoteInterval)
 	heap.Init(&NoteFlickInterval)
+	var lastLeftHandHit *ParsedNote
+	var lastRightHandHit *ParsedNote
 	for i, note := range ParsedMap {
 		if note.Hand == LeftHand {
-			if leftCount != 0 && !(note.Type == NoteTypeSlide && note.Status != SlideStart) {
-				heap.Push(&FingerMaxHPSLeft, reciprocal(note.GetIntervalFront()))
+			if lastLeftHandHit != nil && !(note.Type == NoteTypeSlide && note.Status != SlideStart) {
+				singleHPS := reciprocal(note.GetInterval(lastLeftHandHit))
+				heap.Push(&FingerMaxHPSLeft, singleHPS)
 			}
 			leftCount++
+			lastLeftHandHit = &note
 		} else {
-			if RightCount != 0 && !(note.Type == NoteTypeSlide && note.Status != SlideStart) {
-				heap.Push(&FingerMaxHPSRight, reciprocal(note.GetIntervalFront()))
+			if lastRightHandHit != nil && !(note.Type == NoteTypeSlide && note.Status != SlideStart) {
+				singleHPS := reciprocal(note.GetInterval(lastRightHandHit))
+				heap.Push(&FingerMaxHPSRight, singleHPS)
 			}
 			RightCount++
+			lastRightHandHit = &note
 		}
 		if i != 0 {
 			heap.Push(&MaxSpeed, math.Abs(note.GetGapFront())/note.GetIntervalFront())
@@ -176,8 +182,8 @@ func extendMetricsGetter(ParsedMap ParsedChart) *MapMetricsExtend {
 	totalCount := leftCount + RightCount
 	return &MapMetricsExtend{
 		LeftPercent:       float64(leftCount) / float64(totalCount),
-		MaxSpeed:          math.Max(FingerMaxHPSLeft.GetTopRankAverage(), FingerMaxHPSRight.GetTopRankAverage()),
-		FingerMaxHPS:      MaxSpeed.GetTopRankAverage(),
+		FingerMaxHPS:      math.Max(FingerMaxHPSLeft.GetTopRankAverage(), FingerMaxHPSRight.GetTopRankAverage()),
+		MaxSpeed:          MaxSpeed.GetTopRankAverage(),
 		FlickNoteInterval: FlickNoteInterval.GetTopRankAverage(),
 		NoteFlickInterval: NoteFlickInterval.GetTopRankAverage(),
 	}
