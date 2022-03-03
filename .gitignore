@@ -121,10 +121,11 @@ fabric.properties
 # .nfs files are created when an open file is removed but is still being accessed
 .nfs*
 
-/songList.json
+/assets/songList.json
 /go_build_ayachan
 !/Databases/databaseinfo.go
 /Databases/databaseinfo.go
 release
 logs
 conf.yaml
+/.env

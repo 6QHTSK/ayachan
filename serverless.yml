@@ -1,0 +1,33 @@
+component: scf
+name: ayachan
+inputs:
+  src:
+    src: ./release/server
+    exclude:
+      - .env
+      - logs
+      - .yaml
+  type: web
+  name: ayachan
+  region: ap-guangzhou
+  runtime: Go1
+  environment: #  环境变量
+    variables: #  环境变量对象
+      use_env: ${env:use_env}
+      run_addr: ${env:run_addr}
+      bestdori_api: ${env:bestdori_api}
+      mysql: ${env:mysql}
+      meilisearch: ${env:meilisearch}
+      meilisearch_key: ${env:meilisearch_key}
+  events:
+    - apigw:
+        parameters:
+          serviceId: ${env:scf_apigw_serviceID}
+          protocols:
+            - http
+            - https
+          environment: release
+          endpoints:
+            - path: /v2/
+              method: ANY
+app: ayachan
