@@ -132,6 +132,6 @@ func (s *SearchBody) Filter() (filter []string) {
 
 func (s *SearchBody) Search() (documents []generalModels.BestdoriChartItem, totalCount int64, totalPage int64, err error) {
 	documents, totalCount, err = database.Query(s.queryString, s.page, s.limit, s.Filter())
-	totalPage = int64(math.Ceil(float64(totalPage) / float64(s.limit)))
+	totalPage = int64(math.Ceil(float64(totalCount) / float64(s.limit)))
 	return documents, totalCount, totalPage, err
 }

@@ -151,7 +151,7 @@ func MapInfo(c *gin.Context) {
 
 func MapDataFromBestdori(c *gin.Context) {
 
-	format := c.DefaultQuery("map_format_out", "BestdoriV2")
+	format := c.DefaultQuery("map-format-out", "BestdoriV2")
 
 	chartID, suc := ginx.ConvertParamInt(c, "chartID")
 	if !suc {
